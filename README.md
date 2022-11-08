@@ -14,6 +14,7 @@
 
 1. `python -m venv .esp-venv`
 2. `pip install -r ./esp-requirements.txt`
+3. install pymakr extension (you **must** have node.js)
 
 ### Esp  
 1. Connect the device
@@ -29,8 +30,7 @@
   ```python -m esptool --chip esp32 --port COMx --baud 460800 write_flash -z 0x1000 esp\esp32-20220618-v1.19.1.bin```   
 
 ### Merging  
-1. install pymakr extension (you **must** have node.js)
-2. Open pymakr global config (should be optional, project config in pymakr.conf, check only address):  
+1. Open pymakr global config (should be optional, project config in pymakr.conf, check only address):  
     set address to your port COMx    
     set autoconnet to false  
     set sync_folder to micropython  
