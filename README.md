@@ -3,6 +3,12 @@
 
 ## Setting up micropython and esp32  
 [Source tutorial](https://lemariva.com/blog/2020/03/tutorial-getting-started-micropython-v20)
+
+### Requirements
+- node.js
+- python >= 3.6
+- vscode
+
 ### Micropython  
 1. Only at first run: `python -m venv .esp-venv`
 2. for Win `.\.esp-venv\Scripts\activate ` for Linux `source ./.esp-venv/bin/activate`
