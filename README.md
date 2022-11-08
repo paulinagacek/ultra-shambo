@@ -9,10 +9,11 @@
 - python >= 3.6
 - vscode
 
-### Micropython  
-1. Only at first run: `python -m venv .esp-venv`
-2. for Win `.\.esp-venv\Scripts\activate ` for Linux `source ./.esp-venv/bin/activate`
-3. Only at first run: `pip install -r ./esp-requirements.txt`
+### Micropython 
+#### Configure virutal environment
+
+1. `python -m venv .esp-venv`
+2. `pip install -r ./esp-requirements.txt`
 
 ### Esp  
 1. Connect the device
@@ -23,6 +24,7 @@
       Follow the window, choose manual setting and point to the copied directory.  
 3. Find out the port (on the screen its COM3)
 4. Flash the devices memory and install new firmware (COMx should be your port):   
+  turn on venv: for Win `.\.esp-venv\Scripts\activate ` for Linux `source ./.esp-venv/bin/activate`   
   ```python -m esptool --chip esp32 --port COMx erase_flash```   
   ```python -m esptool --chip esp32 --port COMx --baud 460800 write_flash -z 0x1000 esp\esp32-20220618-v1.19.1.bin```   
 
@@ -32,7 +34,12 @@
     set address to your port COMx    
     set autoconnet to false  
     set sync_folder to micropython  
+
+## Development
+1. Turn on vscode with pymakr on
+2. Develop files in micropython directory
 3. Use upload button to upload micropython directory to the esp
+
 
 
 
