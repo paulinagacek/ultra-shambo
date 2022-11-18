@@ -1,5 +1,25 @@
 # ultra-shambo
 
+## TODO
+
+### Apka **G +H**
+- postawić apke **G**
+- logowanie i rejestracja
+- parowania (wysyłanie ssid i hasła do esp)
+- ekran wyświetlania odległości (czytanie danych z serwera)
+- makiety **M**
+
+### Aźur **L +M**
+- konto **L +M**
+- postawić serwer **L +M**
+- baza danych
+- endpointy (logowanie, rejestracja, get danych, post danych)
+
+### ESP **H M**
+- stawianie WiFi, odbiernie passów, podłączanie się do wifi
+- szczytywanie danych z czujnika **H**
+- wysyłanie danych do Aźura 
+
 
 ## Setting up micropython and esp32  
 [Source tutorial](https://lemariva.com/blog/2020/03/tutorial-getting-started-micropython-v20)
