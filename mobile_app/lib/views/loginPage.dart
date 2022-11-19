@@ -25,7 +25,7 @@ class LoginPage extends StatelessWidget {
             color: Global.greenDark,
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeOutQuad,
             top: keyboardOpen ? -size.height / 3.7 : 0.0,
             child: WaveWidget(
@@ -38,7 +38,7 @@ class LoginPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: 120.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+              children: const <Widget>[
                 Text(
                   'Welcome to',
                   style: TextStyle(
@@ -54,7 +54,7 @@ class LoginPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: 180.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+              children: const <Widget>[
                 Text(
                   'ultra shamboo',
                   style: TextStyle(
@@ -80,7 +80,7 @@ class LoginPage extends StatelessWidget {
                     model.isValidEmail(value);
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Column(
@@ -94,30 +94,45 @@ class LoginPage extends StatelessWidget {
                           ? Icons.visibility
                           : Icons.visibility_off,
                     ),
-                    SizedBox(
-                      height: 10.0,
+                    const SizedBox(
+                      height: 5.0,
                     ),
-                    Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color: Global.greenDark,
+                    TextButton(
+                      onPressed: () {
+                        debugPrint('Forget password click');
+                      },
+                      style: const ButtonStyle(
+                        overlayColor: MaterialStatePropertyAll<Color>(
+                            Global.greenDarkTranparent),
                       ),
-                    ),
+                      child: const Text(
+                        'Forgot password?',
+                        style: TextStyle(
+                          color: Global.greenDark,
+                        ),
+                      ),
+                    )
                   ],
                 ),
-                SizedBox(
-                  height: 20.0,
+                const SizedBox(
+                  height: 5.0,
                 ),
                 ButtonWidget(
                   title: 'Login',
                   hasBorder: false,
+                  onPressed: () {
+                    debugPrint('Login click');
+                  },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 ButtonWidget(
                   title: 'Sign Up',
                   hasBorder: true,
+                  onPressed: () {
+                    debugPrint('Sign up click');
+                  },
                 ),
               ],
             ),

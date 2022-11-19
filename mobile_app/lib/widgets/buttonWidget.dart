@@ -4,44 +4,37 @@ import 'package:mobile_app/globals.dart';
 class ButtonWidget extends StatelessWidget {
   final String title;
   final bool hasBorder;
+  final Function onPressed;
 
   ButtonWidget({
     this.title,
     this.hasBorder,
+    this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Ink(
-        decoration: BoxDecoration(
-          color: hasBorder ? Global.white : Global.greenDark,
-          borderRadius: BorderRadius.circular(10),
-          border: hasBorder
-              ? Border.all(
-                  color: Global.greenDark,
-                  width: 1.0,
-                )
-              : Border.fromBorderSide(BorderSide.none),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            height: 60.0,
-            child: Center(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: hasBorder ? Global.greenDark : Global.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.0,
-                ),
-              ),
+    return SizedBox(
+        width: double.infinity, // <-- match_parent
+        height: 50,
+        child: OutlinedButton(
+          onPressed: onPressed,
+          style: ButtonStyle(
+            overlayColor: hasBorder
+                ? const MaterialStatePropertyAll<Color>(Global.greenDarkTranparent)
+                : const MaterialStatePropertyAll<Color>(Global.whiteTransparent),
+            backgroundColor: hasBorder
+                ? const MaterialStatePropertyAll<Color>(Global.white)
+                : const MaterialStatePropertyAll<Color>(Global.greenDark),
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: hasBorder ? Global.greenDark : Global.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 16.0,
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
-
