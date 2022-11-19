@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/buttonWidget.dart';
+import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/textFieldWidget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Global.white,
         body: Padding(
             padding: const EdgeInsets.all(30.0),
             child: Column(
@@ -42,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const Text(
                         "Forgot password?",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Global.greenDark),
                       ),
                     ]),
                 const SizedBox(

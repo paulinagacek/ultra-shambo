@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter/material.dart';
+import 'package:mobile_app/globals.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final String hintText;
@@ -22,8 +23,8 @@ class TextFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      style: TextStyle(color: Colors.blue, fontSize: 14),
-      cursorColor: Colors.blue,
+      style: TextStyle(color: Global.greenDark, fontSize: 14),
+      cursorColor: Global.greenDark,
       // onChanged: onChanged,
       obscureText: obscureText,
       decoration: InputDecoration(
@@ -31,7 +32,7 @@ class TextFieldWidget extends StatelessWidget {
         prefixIcon: Icon(
           prefixIconData,
           size: 18,
-          color: Colors.blue,
+          color: Global.greenDark,
         ),
         filled: true,
         fillColor: Colors.white12,
@@ -40,16 +41,16 @@ class TextFieldWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Global.greenDark),
           borderRadius: BorderRadius.circular(10.0),
         ),
         suffixIcon: Icon(
           suffixIconData,
-          color: Colors.blue,
+          color: Global.greenDark,
           size: 18,
         ),
-        labelStyle: TextStyle(color: Colors.blue),
-        focusColor: Colors.blue,
+        labelStyle: TextStyle(color: Global.greenDark),
+        focusColor: Global.greenDark,
       ),
     );
   }
