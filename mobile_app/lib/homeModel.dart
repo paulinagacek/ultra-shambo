@@ -17,4 +17,12 @@ class HomeModel extends ChangeNotifier {
         .hasMatch(input);
     notifyListeners();
   }
+
+  get isNewPage => _isNewPage;
+  bool _isNewPage = false;
+
+  void setNewPage(bool bool) {
+    _isNewPage = bool;
+    notifyListeners();
+  }
 }

@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/views/register.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
 import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/homeModel.dart';
 import 'package:mobile_app/widgets/textFieldWidget.dart';
 import 'package:mobile_app/widgets/waveWidget.dart';
-import 'dart:developer';
-
 import 'package:provider/provider.dart';
+import '../routes/CustomPageRoute.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -15,7 +15,6 @@ class LoginPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     final model = Provider.of<HomeModel>(context);
-
     return Scaffold(
       backgroundColor: Global.white,
       body: Stack(
@@ -27,7 +26,9 @@ class LoginPage extends StatelessWidget {
           AnimatedPositioned(
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeOutQuad,
-            top: keyboardOpen ? -size.height / 3.7 : 0.0,
+            top: keyboardOpen
+                    ? -size.height / 3.7
+                    : 0.0,
             child: WaveWidget(
               size: size,
               yOffset: size.height / 2.5,
@@ -132,6 +133,8 @@ class LoginPage extends StatelessWidget {
                   hasBorder: true,
                   onPressed: () {
                     debugPrint('Sign up click');
+                    Navigator.of(context)
+                        .push(CustomPageRoute(child: RegisterPage()));
                   },
                 ),
               ],
