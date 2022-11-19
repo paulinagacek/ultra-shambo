@@ -35,16 +35,32 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 100.0),
+            padding: const EdgeInsets.only(top: 120.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Login',
+                  'Welcome to',
                   style: TextStyle(
                     color: Global.white,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 180.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'ultra shamboo',
+                  style: TextStyle(
+                    color: Global.white,
+                    fontSize: 35.0,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
