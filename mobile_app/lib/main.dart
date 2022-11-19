@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'loginPage.dart';
-
-void main() {
-  runApp(const MyApp());
-}
+import 'package:mobile_app/homeModel.dart';
+import 'package:mobile_app/loginPage.dart';
+import 'package:provider/provider.dart';
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage()
+    return ChangeNotifierProvider(
+      create: (context) => HomeModel(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoginPage(),
+      ),
     );
   }
 }

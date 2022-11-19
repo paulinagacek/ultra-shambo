@@ -1,21 +1,56 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_app/buttonWidget.dart';
+import 'package:mobile_app/widgets/buttonWidget.dart';
 import 'package:mobile_app/globals.dart';
-import 'package:mobile_app/textFieldWidget.dart';
+import 'package:mobile_app/homeModel.dart';
+import 'package:mobile_app/widgets/textFieldWidget.dart';
+import 'package:mobile_app/widgets/waveWidget.dart';
+import 'dart:developer';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+import 'package:provider/provider.dart';
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
+class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    final model = Provider.of<HomeModel>(context);
+
     return Scaffold(
-        backgroundColor: Global.white,
-        body: Padding(
+      backgroundColor: Global.white,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: size.height - 300,
+            color: Global.greenDark,
+          ),
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeOutQuad,
+            top: keyboardOpen ? -size.height / 3.7 : 0.0,
+            child: WaveWidget(
+              size: size,
+              yOffset: size.height / 2.5,
+              color: Global.white,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 100.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Login',
+                  style: TextStyle(
+                    color: Global.white,
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(30.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -23,41 +58,56 @@ class _LoginPageState extends State<LoginPage> {
                 TextFieldWidget(
                   hintText: 'Email',
                   obscureText: false,
-                  prefixIconData: Icons.mail_outline_rounded,
-                  suffixIconData: Icons.one_k,
+                  prefixIconData: Icons.mail_outline,
+                  suffixIconData: model.isValid ? Icons.check : null,
+                  onChanged: (value) {
+                    model.isValidEmail(value);
+                  },
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 10.0,
                 ),
                 Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      TextFieldWidget(
-                        hintText: 'Password',
-                        obscureText: false,
-                        prefixIconData: Icons.lock_outline_rounded,
-                        suffixIconData: Icons.one_k,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    TextFieldWidget(
+                      hintText: 'Password',
+                      obscureText: model.isVisible ? false : true,
+                      prefixIconData: Icons.lock_outline,
+                      suffixIconData: model.isVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      'Forgot password?',
+                      style: TextStyle(
+                        color: Global.greenDark,
                       ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      const Text(
-                        "Forgot password?",
-                        style: TextStyle(color: Global.greenDark),
-                      ),
-                    ]),
-                const SizedBox(
+                    ),
+                  ],
+                ),
+                SizedBox(
                   height: 20.0,
                 ),
-                ButtonWidget(title: 'Login', hasBorder: false),
-                const SizedBox(
+                ButtonWidget(
+                  title: 'Login',
+                  hasBorder: false,
+                ),
+                SizedBox(
                   height: 10.0,
                 ),
-                ButtonWidget(title: 'Sign up', hasBorder: true),
-                const SizedBox(
-                  height: 10.0,
+                ButtonWidget(
+                  title: 'Sign Up',
+                  hasBorder: true,
                 ),
               ],
-            )));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
