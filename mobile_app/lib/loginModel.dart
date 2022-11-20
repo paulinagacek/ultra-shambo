@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/globals.dart';
 
-class HomeModel extends ChangeNotifier {
+class LoginModel extends ChangeNotifier {
   get isVisible => _isVisible;
   bool _isVisible = false;
   set isVisible(value) {
@@ -9,20 +9,19 @@ class HomeModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  get isValid => _isValid;
+  get isRepeatedVisible => _isRepeatedVisible;
+  bool _isRepeatedVisible = false;
+  set isRepeatedVisible(value) {
+    _isRepeatedVisible = value;
+    notifyListeners();
+  }
+
+  get isEmailValid => _isValid;
   bool _isValid = false;
   void isValidEmail(String input) {
     _isValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(input);
-    notifyListeners();
-  }
-
-  get isNewPage => _isNewPage;
-  bool _isNewPage = false;
-
-  void setNewPage(bool bool) {
-    _isNewPage = bool;
     notifyListeners();
   }
 }

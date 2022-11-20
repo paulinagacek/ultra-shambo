@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_app/globals.dart';
-import 'package:mobile_app/homeModel.dart';
+import 'package:mobile_app/loginModel.dart';
 import 'package:provider/provider.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -13,6 +13,9 @@ class TextFieldWidget extends StatelessWidget {
   final IconData suffixIconData;
   final bool obscureText;
   final Function onChanged;
+  final Function onSaved;
+  final Function validator;
+  final Function onTapIcon;
 
   TextFieldWidget({
     this.hintText,
@@ -20,22 +23,32 @@ class TextFieldWidget extends StatelessWidget {
     this.suffixIconData,
     this.obscureText,
     this.onChanged,
+    this.onSaved,
+    this.validator,
+    this.onTapIcon,
   });
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<HomeModel>(context);
+    final model = Provider.of<LoginModel>(context);
+    basicValidator(String value) {
+      if (value.isEmpty) {
+        return "Form cannot be empty";
+      }
+    }
 
-    return TextField(
+    return TextFormField(
+      validator: validator ?? basicValidator,
       onChanged: onChanged,
+      onSaved: onSaved,
       obscureText: obscureText,
       cursorColor: Global.greenDark,
-      style: TextStyle(
+      style: const TextStyle(
         color: Global.greenDark,
         fontSize: 14.0,
       ),
       decoration: InputDecoration(
-        labelStyle: TextStyle(color: Global.greenDark),
+        labelStyle: const TextStyle(color: Global.greenDark),
         focusColor: Global.greenDark,
         filled: true,
         enabledBorder: UnderlineInputBorder(
@@ -44,7 +57,7 @@ class TextFieldWidget extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Global.greenDark),
+          borderSide: const BorderSide(color: Global.greenDark),
         ),
         labelText: hintText,
         prefixIcon: Icon(
@@ -53,9 +66,7 @@ class TextFieldWidget extends StatelessWidget {
           color: Global.greenDark,
         ),
         suffixIcon: GestureDetector(
-          onTap: () {
-            model.isVisible = !model.isVisible;
-          },
+          onTap: onTapIcon,
           child: Icon(
             suffixIconData,
             size: 18,
@@ -66,4 +77,3 @@ class TextFieldWidget extends StatelessWidget {
     );
   }
 }
-
