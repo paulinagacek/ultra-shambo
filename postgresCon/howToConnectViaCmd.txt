@@ -1,0 +1,2 @@
+jak macie psql lokalnie to można z konsoli:
+psql '--host=shamboo.postgres.database.azure.com' '--port=5432' '--dbname=postgres' '--username=kremowka' '--set=sslmode=require'

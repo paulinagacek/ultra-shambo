@@ -136,3 +136,9 @@ dmypy.json
 
 # vscode
 .vscode/
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/ultra-shambo.iml
+/.idea/vcs.xml
