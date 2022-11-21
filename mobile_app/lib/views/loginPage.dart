@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/views/register.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
 import 'package:mobile_app/globals.dart';
@@ -19,6 +20,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  bool selected = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -32,13 +34,19 @@ class _LoginPageState extends State<LoginPage> {
       body: Stack(
         children: <Widget>[
           Container(
-            height: size.height - 300,
+            height: selected ? size.height : size.height - 300,
             color: Global.greenDark,
           ),
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 500),
+            duration: selected
+                ? const Duration(milliseconds: 2000)
+                : const Duration(milliseconds: 300),
             curve: Curves.easeOutQuad,
-            top: keyboardOpen ? -size.height / 3.2 : 0.0,
+            top: selected
+                ? size.height
+                : keyboardOpen
+                    ? -size.height / 3.2
+                    : 0.0,
             child: WaveWidget(
               size: size,
               yOffset: size.height / 2.5,
@@ -105,6 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                         return "Input correct email";
                       }
                     },
+                    visible: !selected,
                   ),
                   const SizedBox(
                     height: 10.0,
@@ -126,25 +135,28 @@ class _LoginPageState extends State<LoginPage> {
                         onSaved: (String value) {
                           _password = value;
                         },
+                        visible: !selected,
                       ),
                       const SizedBox(
                         height: 5.0,
                       ),
-                      TextButton(
-                        onPressed: () {
-                          debugPrint('Forget password click');
-                        },
-                        style: const ButtonStyle(
-                          overlayColor: MaterialStatePropertyAll<Color>(
-                              Global.greenDarkTranparent),
-                        ),
-                        child: const Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                            color: Global.greenDark,
-                          ),
-                        ),
-                      )
+                      Visibility(
+                          visible: !selected,
+                          child: TextButton(
+                            onPressed: () {
+                              debugPrint('Forget password click');
+                            },
+                            style: const ButtonStyle(
+                              overlayColor: MaterialStatePropertyAll<Color>(
+                                  Global.greenDarkTranparent),
+                            ),
+                            child: const Text(
+                              'Forgot password?',
+                              style: TextStyle(
+                                color: Global.greenDark,
+                              ),
+                            ),
+                          ))
                     ],
                   ),
                   const SizedBox(
@@ -153,12 +165,19 @@ class _LoginPageState extends State<LoginPage> {
                   ButtonWidget(
                     title: 'Login',
                     hasBorder: false,
+                    visible: !selected,
                     onPressed: () {
                       if (!_formKey.currentState.validate()) {
                         return;
                       }
                       _formKey.currentState.save();
                       // send to API
+                      setState(() {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        selected = true;
+                      });
+                      Navigator.of(context)
+                            .push(CustomPageRoute(child: const PairingPage()));
                     },
                   ),
                   const SizedBox(
@@ -167,10 +186,11 @@ class _LoginPageState extends State<LoginPage> {
                   ButtonWidget(
                     title: 'Sign Up',
                     hasBorder: true,
+                    visible: !selected,
                     onPressed: () {
                       debugPrint('Sign up click');
                       Navigator.of(context)
-                          .push(CustomPageRoute(child: RegisterPage()));
+                          .push(CustomPageRoute(child: const RegisterPage()));
                     },
                   ),
                 ],
