@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/loginModel.dart';
+import 'package:mobile_app/views/homePage.dart';
 import 'package:mobile_app/views/loginPage.dart';
 import 'package:provider/provider.dart';
 
@@ -10,9 +11,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => LoginModel(),
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: LoginPage(),
+        // home: HomePage(),
       ),
     );
   }
