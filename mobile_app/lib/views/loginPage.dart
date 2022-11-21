@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/views/homePage.dart';
 import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/views/register.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
@@ -176,8 +177,12 @@ class _LoginPageState extends State<LoginPage> {
                         FocusManager.instance.primaryFocus?.unfocus();
                         selected = true;
                       });
+                      // if not paired
+                      // Navigator.of(context)
+                      //       .pushReplacement(CustomPageRoute(child: const PairingPage()));
+                      // else
                       Navigator.of(context)
-                            .push(CustomPageRoute(child: const PairingPage()));
+                            .pushReplacement(CustomPageRoute(child: const HomePage()));
                     },
                   ),
                   const SizedBox(
@@ -190,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       debugPrint('Sign up click');
                       Navigator.of(context)
-                          .push(CustomPageRoute(child: const RegisterPage()));
+                          .pushReplacement(CustomPageRoute(child: const RegisterPage()));
                     },
                   ),
                 ],

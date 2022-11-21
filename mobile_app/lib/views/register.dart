@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/loginModel.dart';
+import 'package:mobile_app/routes/CustomPageRoute.dart';
+import 'package:mobile_app/views/loginPage.dart';
+import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
 import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/widgets/textFieldWidget.dart';
@@ -15,11 +18,11 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   String _email;
-  // String _password;
-  // String _repeatedPassword;
 
   TextEditingController _password = TextEditingController();
   TextEditingController _confirmpassword = TextEditingController();
+
+  bool selected = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -34,13 +37,19 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Stack(
         children: <Widget>[
           Container(
-            height: size.height - 300,
+            height: selected ? size.height : size.height - 300,
             color: Global.greenDark,
           ),
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 500),
+            duration: selected
+                ? const Duration(milliseconds: 2000)
+                : const Duration(milliseconds: 300),
             curve: Curves.easeOutQuad,
-            top: keyboardOpen ? -size.height / 2.6 : 0.0,
+            top: selected
+                ? size.height
+                : keyboardOpen
+                    ? -size.height / 3.2
+                    : 0.0,
             child: WaveWidget(
               size: size,
               yOffset: size.height / 2.5,
@@ -107,6 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         return "Input correct email";
                       }
                     },
+                    visible: !selected,
                   ),
                   const SizedBox(
                     height: 10.0,
@@ -137,6 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             return "Password is too short";
                           }
                         },
+                        visible: !selected,
                       ),
                     ],
                   ),
@@ -172,6 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             return "Provided passwords are not the same";
                           }
                         },
+                        visible: !selected,
                       ),
                     ],
                   ),
@@ -181,12 +193,20 @@ class _RegisterPageState extends State<RegisterPage> {
                   ButtonWidget(
                     title: 'Create account',
                     hasBorder: false,
+                    visible: !selected,
                     onPressed: () {
                       if (!_formKey.currentState.validate()) {
                         return;
                       }
                       _formKey.currentState.save();
                       // send to API
+                      setState(() {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        selected = true;
+                      });
+                      // if everything ok
+                      Navigator.of(context)
+                            .pushReplacement(CustomPageRoute(child: const PairingPage()));
                     },
                   ),
                   const SizedBox(
@@ -195,9 +215,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   ButtonWidget(
                     title: 'I already have an account',
                     hasBorder: true,
+                    visible: !selected,
                     onPressed: () {
                       debugPrint('Have account click');
-                      Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .pushReplacement(CustomPageRoute(child: const LoginPage()));
                     },
                   ),
                 ],
