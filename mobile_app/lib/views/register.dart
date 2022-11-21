@@ -15,8 +15,11 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   String _email;
-  String _password;
-  String _repeatedPassword;
+  // String _password;
+  // String _repeatedPassword;
+
+  TextEditingController _password = TextEditingController();
+  TextEditingController _confirmpassword = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -94,6 +97,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     onSaved: (String value) {
                       _email = value;
                     },
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Form cannot be empty";
+                      }
+                      if (!RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(value)) {
+                        return "Input correct email";
+                      }
+                    },
                   ),
                   const SizedBox(
                     height: 10.0,
@@ -108,12 +121,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         suffixIconData: model.isVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        controller: _password,
                         onSaved: (String value) {
-                          _password = value;
+                          _password.text = value;
                         },
                         onTapIcon: () {
                           model.isVisible = !model.isVisible;
                           model.notifyListeners();
+                        },
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return "Form cannot be empty";
+                          }
+                          if (value.length < 8) {
+                            return "Password is too short";
+                          }
                         },
                       ),
                     ],
@@ -131,12 +153,24 @@ class _RegisterPageState extends State<RegisterPage> {
                         suffixIconData: model.isRepeatedVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        controller: _confirmpassword,
                         onSaved: (String value) {
-                          _repeatedPassword = value;
+                          _confirmpassword.text = value;
                         },
                         onTapIcon: () {
                           model.isRepeatedVisible = !model.isRepeatedVisible;
                           model.notifyListeners();
+                        },
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return "Form cannot be empty";
+                          }
+                          if (value.length < 8) {
+                            return "Password is too short";
+                          }
+                          if (_password.text!=_confirmpassword.text) {
+                            return "Provided passwords are not the same";
+                          }
                         },
                       ),
                     ],

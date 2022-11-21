@@ -95,6 +95,16 @@ class _LoginPageState extends State<LoginPage> {
                     onSaved: (String value) {
                       _email = value;
                     },
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Form cannot be empty";
+                      }
+                      if (!RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(value)) {
+                        return "Input correct email";
+                      }
+                    },
                   ),
                   const SizedBox(
                     height: 10.0,

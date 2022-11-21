@@ -16,6 +16,7 @@ class TextFieldWidget extends StatelessWidget {
   final Function onSaved;
   final Function validator;
   final Function onTapIcon;
+  final TextEditingController controller;
 
   TextFieldWidget({
     this.hintText,
@@ -26,6 +27,7 @@ class TextFieldWidget extends StatelessWidget {
     this.onSaved,
     this.validator,
     this.onTapIcon,
+    this.controller,
   });
 
   @override
@@ -40,6 +42,7 @@ class TextFieldWidget extends StatelessWidget {
     return TextFormField(
       validator: validator ?? basicValidator,
       onChanged: onChanged,
+      controller: controller,
       onSaved: onSaved,
       obscureText: obscureText,
       cursorColor: Global.greenDark,
