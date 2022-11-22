@@ -8,6 +8,7 @@
 - parowania (wysyłanie ssid i hasła do esp)
 - ekran wyświetlania odległości (czytanie danych z serwera)
 - makiety **M**
+- wystawić usługę do odczytywania ostatnich zmian w bazie danych
 
 ### Aźur **L +M**
 - konto **L +M**
