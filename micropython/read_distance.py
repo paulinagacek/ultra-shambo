@@ -14,17 +14,15 @@ class DistanceReader:
 
         # Clears the trigPin
         self.trig_pin.off()
-        time.sleep_us(3) # wait 3 microseconds
+        time.sleep_us(3)  # wait 3 microseconds
 
         # Sets the trigPin on HIGH state for 10 micro seconds
         self.trig_pin.on()
-        time.sleep_us(10) # wait 10 microseconds
+        time.sleep_us(10)  # wait 10 microseconds
         self.trig_pin.off()
 
         # Reads the echoPin, returns the sound wave travel time in microseconds
         duration = machine.time_pulse_us(self.echo_pin, 1)
 
         # Calculate the distance
-        distance = duration * DistanceReader.SPEED_OF_SOUND;
-
-        return distance
+        return duration * DistanceReader.SPEED_OF_SOUND

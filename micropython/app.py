@@ -1,4 +1,3 @@
-import machine
 import time
 from read_distance import DistanceReader
 
