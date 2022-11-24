@@ -61,7 +61,13 @@
 2. Develop files in micropython directory
 3. Use upload button to upload micropython directory to the esp
 
-
+## How to run
+1. Connect gnd cable to GND port, Vcc cable to 5V port, trig cable to port 18, echo cable to port 19
+2. Connect ESP with your computer by a micro USB cable
+3. Run VSCode, if everything is setup right PyMakr console should print `>>>`
+4. In PyMakr console enter 
+   `import app`
+   `app.run()`
 
 
 ## Esp resources
