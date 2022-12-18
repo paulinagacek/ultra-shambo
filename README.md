@@ -8,6 +8,7 @@
 - parowania (wysyłanie ssid i hasła do esp)
 - ekran wyświetlania odległości (czytanie danych z serwera)
 - makiety **M**
+- wystawić usługę do odczytywania ostatnich zmian w bazie danych
 
 ### Aźur **L +M**
 - konto **L +M**
@@ -60,8 +61,21 @@
 2. Develop files in micropython directory
 3. Use upload button to upload micropython directory to the esp
 
-
+## How to run
+1. Connect gnd cable to GND port, Vcc cable to 5V port, trig cable to port 18, echo cable to port 19
+2. Connect ESP with your computer by a micro USB cable
+3. Run VSCode, if everything is setup right PyMakr console should print `>>>`
+4. In PyMakr console enter 
+   `import app`
+   `app.run()`
 
 
 ## Esp resources
 - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html
+
+
+## Cloud to device
+### requirements:
+- python >= 3.7
+- azure-iot-device
+- azure-iot-hub
