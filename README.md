@@ -72,3 +72,10 @@
 
 ## Esp resources
 - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html
+
+
+## Cloud to device
+### requirements:
+- python >= 3.7
+- azure-iot-device
+- azure-iot-hub
