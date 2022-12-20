@@ -18,6 +18,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.9.2
+  permission_handler: ^9.2.0
+  android_flutter_wifi: ^0.0.8
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -27,7 +29,7 @@ dependencies:
 
 dev_dependencies:
   flutter_test:
-    sdk: flutter
+    sdk: flutter 
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

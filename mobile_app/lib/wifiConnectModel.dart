@@ -44,6 +44,7 @@ class _MyAppState extends State<MyApp> {
     var isConnected = await AndroidFlutterWifi.isConnected();
     await getDhcpInfo();
     await getWifiList();
+    // await connectionTest();
     print('Is connected: ${isConnected.toString()}');
   }
 
@@ -52,6 +53,11 @@ class _MyAppState extends State<MyApp> {
     if (wifiList.isNotEmpty) {
       WifiNetwork wifiNetwork = wifiList[0];
       print('Name: ${wifiNetwork.ssid}');
+      String ssid = wifiNetwork.ssid;
+      String password = 'aaa22';
+      var result = await AndroidFlutterWifi.connectToNetwork(ssid, password);
+      print("--elo--");
+      print('---------Connection result-----------: ${result.toString()}');
     }
   }
 
@@ -77,18 +83,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   void connectionTest() async {
-    String ssid = 'TP-Link_F9D0';
+    String ssid = "";
     String password = '';
     if (ssid.isEmpty) {
-      throw ("SSID can't be empty");
+      print(" !!!! SSID can't be empty");
+      // throw (" !!!! SSID can't be empty");
     }
     if (password.isEmpty) {
-      throw ("Password can't be empty");
+      print(" !!!  Password can't be empty");
+      // throw (" !!!  Password can't be empty");
     }
-    debugPrint('Ssid: $ssid, Password: $password');
+    print('\n ---->  Ssid: $ssid, Password: $password');
     var result = await AndroidFlutterWifi.connectToNetwork(ssid, password);
 
-    debugPrint('---------Connection result-----------: ${result.toString()}');
-
+    print('---------Connection result-----------: ${result.toString()}');
   }
 }
