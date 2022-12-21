@@ -4,7 +4,7 @@ from azure.iot.device import IoTHubDeviceClient
 RECEIVED_MESSAGES = 0
 
 # connection string brany dla apki
-CONNECTION_STRING = "HostName=shamboo.azure-devices.net;DeviceId=shamboo_apka;SharedAccessKey=58+DQZwRFxHRBrwg/u9aIZhyLm0RLXhjeh5gDRbcsME="
+CONNECTION_STRING = "HostName=shamboo.azure-devices.net;DeviceId=shamboo_apka;SharedAccessKey=szME/R607srN+8uT/N5d02lZeE/QcEEaPhtfMjQ7pCY="
 
 
 def message_handler(message):

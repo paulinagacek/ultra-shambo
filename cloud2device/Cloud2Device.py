@@ -6,7 +6,7 @@ MESSAGE_COUNT = 2
 MSG_TXT = "{\"service client sent a message\": %.2f}"
 
 # connection string dla iot huba
-CONNECTION_STRING = "HostName=shamboo.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=cGSbRq4U9U0EO10fCFRuPmZu2Txw6vCthUkMebBncdc="
+CONNECTION_STRING = "HostName=shamboo.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=LuaiDSdYuXy7N8e+cUNWplqqZrGgDh+8WALsYYjjZtY="
 DEVICE_ID = "shamboo_apka"
 
 
