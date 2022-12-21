@@ -16,14 +16,14 @@ from azure.iot.device import IoTHubDeviceClient, Message, X509
 
 
 # The device that has been created on the portal using X509 CA signing or Self signing capabilities
-device_id = "shamboo_distance_meter"
+device_id = "esp32"
 hostname = "shamboo.azure-devices.net"
 
 
 x509 = X509(
-    cert_file="./device-cert.pem",
-    key_file="./device-key.pem",
-    pass_phrase="shamboo",
+    cert_file="cert.pem",
+    key_file="esp32.pem",
+    pass_phrase="",
 )
 
 # The client object is used to interact with your Azure IoT hub.
