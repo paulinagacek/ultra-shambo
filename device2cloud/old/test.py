@@ -35,9 +35,9 @@ device_client = IoTHubDeviceClient.create_from_x509_certificate(
 device_client.connect()
 print("Connected to Azure IoT Hub")
 # send 5 messages with a 1 second pause between each message
-for i in range(1, 6):
+for i in range(1, 3):
     print("sending message #" + str(i))
-    msg = Message("test wind speed " + str(i))
+    msg = Message("test wind speed " + "cos sdasdasd")
     msg.message_id = uuid.uuid4()
     msg.correlation_id = "correlation-1234"
     msg.custom_properties["tornado-warning"] = "yes"
@@ -46,11 +46,11 @@ for i in range(1, 6):
     device_client.send_message(msg)
     time.sleep(1)
 
-# send only string messages
-for i in range(6, 11):
-    print("sending message #" + str(i))
-    device_client.send_message("test payload message " + str(i))
-    time.sleep(1)
+# # send only string messages
+# for i in range(6, 11):
+#     print("sending message #" + str(i))
+#     device_client.send_message("test payload message " + str(i))
+#     time.sleep(1)
 
 
 # finally, shut down the client
