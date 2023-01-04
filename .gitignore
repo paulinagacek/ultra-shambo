@@ -129,3 +129,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# esp-venv
+.esp-venv
+
+# I cannot delete the file in main dir so I ignore it here
+/CP210x_Universal_Windows_Driver
+
+# vscode
+.vscode/
