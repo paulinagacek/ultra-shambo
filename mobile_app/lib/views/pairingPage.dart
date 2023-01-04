@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -6,6 +8,7 @@ import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
 import 'package:android_flutter_wifi/android_flutter_wifi.dart';
 import 'package:location/location.dart';
+import 'package:flutter/services.dart';
 
 class PairingPage extends StatefulWidget {
   const PairingPage({Key key}) : super(key: key);
@@ -14,23 +17,48 @@ class PairingPage extends StatefulWidget {
   State<PairingPage> createState() => _PairingPageState();
 }
 
-String espSsid = "ESP WIFI";
-String espPassword = "iotiot420";
-bool connected = false;
+String espSsid = "Lenovo-Legion";
+String espPassword = "bananaski";
 
-void connectToespWifi() async {
-  Location location = new Location();
-  location.enableBackgroundMode(enable: true);
-  print('Ssid: $espSsid, Password: $espPassword');
-  var result = await AndroidFlutterWifi.connectToNetwork(espSsid, espPassword);
-  if (result) {
-    print('\n Mobile connected successfuly!');
-  } else {
-    print('\nCannot connect :(');
+Future<bool> connectToespWifi() async {
+  // await AndroidFlutterWifi.init();
+  // Location location = new Location();
+  // location.enableBackgroundMode(enable: true);
+  // print('Ssid: $espSsid, Password: $espPassword');
+  // var result = await AndroidFlutterWifi.connectToNetwork(espSsid, espPassword);
+  // if (result) {
+  //   print('\n Mobile connected successfuly!');
+  // } else {
+  //   print('\nCannot connect :(');
+  // }
+
+  const platform = MethodChannel('samples.flutter.dev/wificonnect');
+  try {
+    await platform.invokeMethod('connectToWifi', { "SSID": espSsid, "password": espPassword });
+    while(!(await platform.invokeMethod('isConnected'))) {
+      print("Waiting for connection");
+      sleep(const Duration(milliseconds: 250));
+    }
+    print("Connected :)");
+
+    // disconnect test
+    // await platform.invokeMethod('disconnect');
+    // while((await platform.invokeMethod('isConnected'))) {
+    //   print("Waiting for disconnection");
+    //   sleep(const Duration(milliseconds: 250));
+    // }
+    // print("Disconnected :)");
+
+    return true;
+  } on PlatformException catch (e) {
+    print("Connection error: '${e.message}'.");
   }
+  return false;
 }
 
 class _PairingPageState extends State<PairingPage> {
+  bool _connected = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,10 +103,13 @@ class _PairingPageState extends State<PairingPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   ButtonWidget(
-                    title: !connected ? 'Pair with ESP' : "Connected",
+                    title: !_connected ? 'Pair with ESP' : "Connected",
                     hasBorder: true,
-                    onPressed: () {
-                      connectToespWifi();
+                    onPressed: () async{
+                      bool connected = await connectToespWifi();
+                      setState(() {
+                        _connected = connected;
+                      });
                     },
                   ),
                 ],
