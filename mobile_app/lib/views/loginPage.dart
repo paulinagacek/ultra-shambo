@@ -139,25 +139,25 @@ class _LoginPageState extends State<LoginPage> {
                         visible: !selected,
                       ),
                       const SizedBox(
-                        height: 5.0,
+                        height: 40.0,
                       ),
-                      Visibility(
-                          visible: !selected,
-                          child: TextButton(
-                            onPressed: () {
-                              debugPrint('Forget password click');
-                            },
-                            style: const ButtonStyle(
-                              overlayColor: MaterialStatePropertyAll<Color>(
-                                  Global.greenDarkTranparent),
-                            ),
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(
-                                color: Global.greenDark,
-                              ),
-                            ),
-                          ))
+                      // Visibility(
+                      //     visible: !selected,
+                      //     child: TextButton(
+                      //       onPressed: () {
+                      //         debugPrint('Forget password click');
+                      //       },
+                      //       style: const ButtonStyle(
+                      //         overlayColor: MaterialStatePropertyAll<Color>(
+                      //             Global.greenDarkTranparent),
+                      //       ),
+                      //       child: const Text(
+                      //         'Forgot password?',
+                      //         style: TextStyle(
+                      //           color: Global.greenDark,
+                      //         ),
+                      //       ),
+                      //     ))
                     ],
                   ),
                   const SizedBox(

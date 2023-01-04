@@ -140,19 +140,19 @@ class _RegisterPageState extends State<RegisterPage> {
                           model.notifyListeners();
                         },
                         validator: (String value) {
-                          if (value.isEmpty) {
-                            return "Form cannot be empty";
-                          }
-                          if (value.length < 8) {
-                            return "Password is too short";
-                          }
+                          // if (value.isEmpty) {
+                          //   return "Form cannot be empty";
+                          // }
+                          // if (value.length < 8) {
+                          //   return "Password is too short";
+                          // }
                         },
                         visible: !selected,
                       ),
                     ],
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 5.0,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -173,22 +173,22 @@ class _RegisterPageState extends State<RegisterPage> {
                           model.notifyListeners();
                         },
                         validator: (String value) {
-                          if (value.isEmpty) {
-                            return "Form cannot be empty";
-                          }
-                          if (value.length < 8) {
-                            return "Password is too short";
-                          }
-                          if (_password.text!=_confirmpassword.text) {
-                            return "Provided passwords are not the same";
-                          }
+                          // if (value.isEmpty) {
+                          //   return "Form cannot be empty";
+                          // }
+                          // if (value.length < 8) {
+                          //   return "Password is too short";
+                          // }
+                          // if (_password.text!=_confirmpassword.text) {
+                          //   return "Provided passwords are not the same";
+                          // }
                         },
                         visible: !selected,
                       ),
                     ],
                   ),
                   const SizedBox(
-                    height: 30.0,
+                    height: 20.0,
                   ),
                   ButtonWidget(
                     title: 'Create account',
