@@ -2,7 +2,7 @@ import usocket as socket
 import network
 
 
-class ConnectionManager:
+class PhoneConnectionManager:
     def __init__(self, port, ssid, password) -> None:
         self.port = port
         self.ssid = ""
@@ -14,6 +14,8 @@ class ConnectionManager:
             password=password, 
             max_clients=10)
 
+        self.wifi = None
+
     def start_ap_and_get_wifi_data(self):
         self.ap.active(True)
         print("APN started")
@@ -23,13 +25,17 @@ class ConnectionManager:
 
     def wifi_connect(self):
         print(f"Connecting to {self.ssid}")
-        wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
-        if not wlan.isconnected():
-            wlan.connect(self.ssid, self.password)
-            while not wlan.isconnected():
+        self.wifi = network.WLAN(network.STA_IF)
+        self.wifi.active(True)
+        if not self.wifi.isconnected():
+            self.wifi.connect(self.ssid, self.password)
+            while not self.wifi.isconnected():
                 pass
         print(f"Connected")
+
+    def wifi_disconnect(self):
+        self.wifi.active(False)
+        self.wiki = None
 
     def __get_wifi_data(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
