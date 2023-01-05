@@ -1,9 +1,11 @@
 import usocket as socket
+import time
 import network
 
 
 class PhoneConnectionManager:
-    def __init__(self, port, ssid, password) -> None:
+    def __init__(self, device_id, port, ssid, password) -> None:
+        self.device_id = device_id
         self.port = port
         self.ssid = ""
         self.password = ""
@@ -20,6 +22,7 @@ class PhoneConnectionManager:
         self.ap.active(True)
         print("APN started")
         self.ssid, self.password = self.__get_wifi_data()
+        print(self.ssid, self.password)
         print("APN stopped")
         self.ap.active(False)
 
@@ -45,7 +48,8 @@ class PhoneConnectionManager:
         conn, _ = s.accept()
         request = conn.recv(1024).rstrip()
         wifi_data = self.__parse_wifi_data(str(request))
-        conn.send('OK')
+        conn.send(self.device_id)
+        time.sleep(1)
         conn.close()
         s.close()
         return wifi_data

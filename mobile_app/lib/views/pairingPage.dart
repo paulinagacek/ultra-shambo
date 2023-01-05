@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -16,9 +17,10 @@ class PairingPage extends StatefulWidget {
   @override
   State<PairingPage> createState() => _PairingPageState();
 }
-
-String espSsid = "Lenovo-Legion";
-String espPassword = "bananaski";
+Socket socket;
+String espSsid = "ESP WIFI";
+String espPassword = "iotiot420";
+int port = 8888;
 
 Future<bool> connectToespWifi() async {
   // await AndroidFlutterWifi.init();
@@ -54,6 +56,33 @@ Future<bool> connectToespWifi() async {
     print("Connection error: '${e.message}'.");
   }
   return false;
+}
+
+void exchangeDataWithEsp() {
+  Socket.connect("192.168.4.1", port).then((Socket sock) {
+    socket = sock;
+    socket.listen(dataHandler,
+        onError: null,
+        onDone: doneHandler,
+        cancelOnError: false);
+    socket.write("Redmi Note 11;bananaski");
+  }).catchError((Object  e) {
+    print("Unable to connect: $e");
+  });
+  //Connect standard in to the socket
+}
+
+void dataHandler(data){
+  print("got data");
+  print(String.fromCharCodes(data).trim());
+}
+
+errorHandler(Object error){
+  print(error);
+}
+
+void doneHandler(){
+  socket.destroy();
 }
 
 class _PairingPageState extends State<PairingPage> {
@@ -110,6 +139,7 @@ class _PairingPageState extends State<PairingPage> {
                       setState(() {
                         _connected = connected;
                       });
+                      exchangeDataWithEsp();
                     },
                   ),
                 ],

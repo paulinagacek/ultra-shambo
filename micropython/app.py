@@ -9,7 +9,7 @@ import urequests
 config = {
     'TRIG_PIN': 18,
     'ECHO_PIN': 19,
-    'PORT': 2137,
+    'PORT': 8888,
     'SSID': 'ESP WIFI',
     'PASSWORD': 'iotiot420',
     # 'DEVICE_ID': 'shamboo_distance_meter',
@@ -27,6 +27,7 @@ class Application:
             config['TRIG_PIN'], 
             config['ECHO_PIN'])
         self.phoneConnectionManager = PhoneConnectionManager(
+            config['DEVICE_ID'],
             config['PORT'], 
             config['SSID'], 
             config['PASSWORD'])
