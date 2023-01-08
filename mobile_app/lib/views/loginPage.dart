@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/connection/azure_connection.dart';
 import 'package:mobile_app/views/homePage.dart';
 import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/views/register.dart';
@@ -167,16 +168,21 @@ class _LoginPageState extends State<LoginPage> {
                     title: 'Login',
                     hasBorder: false,
                     visible: !selected,
-                    onPressed: () {
+                    onPressed: () async {
                       if (!_formKey.currentState.validate()) {
                         return;
                       }
                       _formKey.currentState.save();
-                      // send to API
                       setState(() {
                         FocusManager.instance.primaryFocus?.unfocus();
                         selected = true;
                       });
+                      var azure = AzureConnection();
+                      bool logged = await azure.logUser(_email, _password);
+                      if (!logged) {
+                        print("unsuccesful");
+                        return;
+                      }
                       // if not paired
                       // Navigator.of(context)
                       //       .pushReplacement(CustomPageRoute(child: const PairingPage()));
