@@ -3,7 +3,9 @@ import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/widgets/waveWidget.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
+  final String deviceId;
+
+  const HomePage({Key key, this.deviceId}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -11,9 +13,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double fullPercent = 36;
-
   @override
   Widget build(BuildContext context) {
+    final String title = 'Your shamboo (${widget.deviceId}) is full in';
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
@@ -40,10 +42,10 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(top: size.height * 0.5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
+                children: <Widget>[
                   Text(
-                    'Your shamboo is full in',
-                    style: TextStyle(
+                    title,
+                    style: const TextStyle(
                       color: Global.white,
                       fontSize: 30.0,
                       fontWeight: FontWeight.w300,

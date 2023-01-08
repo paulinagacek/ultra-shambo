@@ -36,6 +36,7 @@ Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
       attempt++;
     }
     if (attempt == maxAttempts) {
+      await platform.invokeMethod('disconnect');
       return false;
     }
     print("Connected :)");
@@ -57,11 +58,11 @@ Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
 Socket socket;
 int port = 8888;
 
-void exchangeDataWithEsp(ssid, password) {
+void exchangeDataWithEsp(ssid, password, dataCallback) {
   print("<33333333333 ------------ <3333 ------ <3 <3>");
   Socket.connect("192.168.4.1", port).then((Socket sock) {
     socket = sock;
-    socket.listen(dataHandler,
+    socket.listen(createdataHandler(dataCallback),
         onError: null, onDone: doneHandler, cancelOnError: false);
     socket.write("$ssid;$password");
   }).catchError((Object e) {
@@ -70,11 +71,11 @@ void exchangeDataWithEsp(ssid, password) {
   print("Waiting for deviceId");
 }
 
-void dataHandler(data) {
+void Function(Uint8List) createdataHandler(dataCallback) {
+  return (data) {
   print("got data");
-  String deviceId = String.fromCharCodes(data).trim();
-  print(deviceId);
-  sendToAzureAndGoToHomePage(deviceId);
+  dataCallback(data);
+  };
 }
 
 errorHandler(Object error) {
@@ -83,15 +84,6 @@ errorHandler(Object error) {
 
 void doneHandler() {
   socket.destroy();
-}
-
-sendToAzureAndGoToHomePage(deviceId) async {
-  const platform = MethodChannel('samples.flutter.dev/wificonnect');
-  await platform.invokeMethod('disconnect');
-
-  // send device to api TODO
-  // Navigator.of(context).pushReplacement(
-  //     CustomPageRoute(child: const HomePage()));
 }
 
 class _PairingPageState extends State<PairingPage> {
@@ -243,7 +235,17 @@ class _PairingPageState extends State<PairingPage> {
                               return;
                             }
 
-                            exchangeDataWithEsp(wifiSsid, wifiPassword);
+                            exchangeDataWithEsp(wifiSsid, wifiPassword, (data) async {
+                              String deviceId = String.fromCharCodes(data).trim();
+                              print(deviceId);
+
+                              const platform = MethodChannel('samples.flutter.dev/wificonnect');
+                              await platform.invokeMethod('disconnect');
+
+                              // send device to api TODO
+                              Navigator.of(context).pushReplacement(
+                                  CustomPageRoute(child: const HomePage()));
+                            });
                           }
                         },
                       ),
