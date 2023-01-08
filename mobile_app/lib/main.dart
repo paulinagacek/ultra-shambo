@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: PairingPage(),
         // home: HomePage(),
+        // home: LoginPage(),
       ),
     );
   }
