@@ -11,6 +11,7 @@ import 'package:mobile_app/widgets/textFieldWidget.dart';
 import 'package:mobile_app/widgets/waveWidget.dart';
 import 'package:provider/provider.dart';
 import '../routes/CustomPageRoute.dart';
+import '../widgets/alertDialog.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -47,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
             top: selected
                 ? size.height
                 : keyboardOpen
-                    ? -size.height / 3.2
+                    ? -size.height / 3.0
                     : 0.0,
             child: WaveWidget(
               size: size,
@@ -56,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 120.0),
+            padding: const EdgeInsets.only(top: 130.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[
@@ -72,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 180.0),
+            padding: const EdgeInsets.only(top: 190.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[
@@ -173,22 +174,27 @@ class _LoginPageState extends State<LoginPage> {
                         return;
                       }
                       _formKey.currentState.save();
-                      setState(() {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        selected = true;
-                      });
                       var azure = AzureConnection();
+
                       bool logged = await azure.logUser(_email, _password);
                       if (!logged) {
-                        print("unsuccesful");
+                        
+                        print("unsuccesful login");
+                        showAlertDialog(context, "Login error",
+                            "Provided email or password is incorrect. Try again with correct data.");
                         return;
+                      } else {
+                        setState(() {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          selected = true;
+                        });
+                        Navigator.of(context).pushReplacement(CustomPageRoute(
+                            child: const HomePage(deviceId: "nnnn")));
                       }
                       // if not paired
                       // Navigator.of(context)
                       //       .pushReplacement(CustomPageRoute(child: const PairingPage()));
                       // else
-                      Navigator.of(context)
-                            .pushReplacement(CustomPageRoute(child: const HomePage()));
                     },
                   ),
                   const SizedBox(
@@ -200,8 +206,8 @@ class _LoginPageState extends State<LoginPage> {
                     visible: !selected,
                     onPressed: () {
                       debugPrint('Sign up click');
-                      Navigator.of(context)
-                          .pushReplacement(CustomPageRoute(child: const RegisterPage()));
+                      Navigator.of(context).pushReplacement(
+                          CustomPageRoute(child: const RegisterPage()));
                     },
                   ),
                 ],
