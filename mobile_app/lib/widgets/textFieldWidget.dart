@@ -42,7 +42,7 @@ class TextFieldWidget extends StatelessWidget {
 
     return Visibility(
         visible: visible ?? true,
-        child: TextFormField(
+          child: TextFormField(
           validator: validator ?? basicValidator,
           onChanged: onChanged,
           controller: controller,
@@ -57,13 +57,14 @@ class TextFieldWidget extends StatelessWidget {
             labelStyle: const TextStyle(color: Global.greenDark),
             focusColor: Global.greenDark,
             filled: true,
+            fillColor: Global.white,
             enabledBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
             ),
-            focusedBorder: OutlineInputBorder(
+            focusedBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Global.greenDark),
+              borderSide: const BorderSide(color: Global.greenDark)
             ),
             labelText: hintText,
             prefixIcon: Icon(
@@ -80,6 +81,7 @@ class TextFieldWidget extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        ),
+        );
   }
 }

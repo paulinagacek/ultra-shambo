@@ -11,46 +11,30 @@ import 'package:android_flutter_wifi/android_flutter_wifi.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 
+import '../widgets/textFieldWidget.dart';
+
 class PairingPage extends StatefulWidget {
   const PairingPage({Key key}) : super(key: key);
 
   @override
   State<PairingPage> createState() => _PairingPageState();
 }
+
 Socket socket;
 String espSsid = "ESP WIFI";
 String espPassword = "iotiot420";
 int port = 8888;
 
 Future<bool> connectToespWifi() async {
-  // await AndroidFlutterWifi.init();
-  // Location location = new Location();
-  // location.enableBackgroundMode(enable: true);
-  // print('Ssid: $espSsid, Password: $espPassword');
-  // var result = await AndroidFlutterWifi.connectToNetwork(espSsid, espPassword);
-  // if (result) {
-  //   print('\n Mobile connected successfuly!');
-  // } else {
-  //   print('\nCannot connect :(');
-  // }
-
   const platform = MethodChannel('samples.flutter.dev/wificonnect');
   try {
-    await platform.invokeMethod('connectToWifi', { "SSID": espSsid, "password": espPassword });
-    while(!(await platform.invokeMethod('isConnected'))) {
+    await platform.invokeMethod(
+        'connectToWifi', {"SSID": espSsid, "password": espPassword});
+    while (!(await platform.invokeMethod('isConnected'))) {
       print("Waiting for connection");
       sleep(const Duration(milliseconds: 250));
     }
     print("Connected :)");
-
-    // disconnect test
-    // await platform.invokeMethod('disconnect');
-    // while((await platform.invokeMethod('isConnected'))) {
-    //   print("Waiting for disconnection");
-    //   sleep(const Duration(milliseconds: 250));
-    // }
-    // print("Disconnected :)");
-
     return true;
   } on PlatformException catch (e) {
     print("Connection error: '${e.message}'.");
@@ -62,48 +46,74 @@ void exchangeDataWithEsp() {
   Socket.connect("192.168.4.1", port).then((Socket sock) {
     socket = sock;
     socket.listen(dataHandler,
-        onError: null,
-        onDone: doneHandler,
-        cancelOnError: false);
+        onError: null, onDone: doneHandler, cancelOnError: false);
     socket.write("Redmi Note 11;bananaski");
-  }).catchError((Object  e) {
+  }).catchError((Object e) {
     print("Unable to connect: $e");
   });
   //Connect standard in to the socket
 }
 
-void dataHandler(data){
+void dataHandler(data) {
   print("got data");
   print(String.fromCharCodes(data).trim());
 }
 
-errorHandler(Object error){
+errorHandler(Object error) {
   print(error);
 }
 
-void doneHandler(){
+void doneHandler() {
   socket.destroy();
 }
 
 class _PairingPageState extends State<PairingPage> {
   bool _connected = false;
+  String wifiSsid = "";
+  String wifiPassword = "";
+
+  final GlobalKey<FormState> _formKeyWifi = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    bool selected = true;
     return Scaffold(
         backgroundColor: Global.greenDark,
-        body: Column(
-          children: [
+        body: Stack(
+          children: <Widget>[
+            Container(
+              height: keyboardOpen ? 0 : 300,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 130.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    Text(
+                      'You have to do\none more thing',
+                      style: TextStyle(
+                        color: Global.white,
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.only(top: 300.0),
+              padding: keyboardOpen
+                  ? const EdgeInsets.only(top: 150.0)
+                  : const EdgeInsets.only(top: 350.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const <Widget>[
                   Text(
-                    'You have to do',
+                    'provide your wifi details',
                     style: TextStyle(
                       color: Global.white,
-                      fontSize: 30.0,
+                      fontSize: 20.0,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
@@ -111,42 +121,77 @@ class _PairingPageState extends State<PairingPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
-                  Text(
-                    'one more thing',
-                    style: TextStyle(
-                      color: Global.white,
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.w300,
+              padding: keyboardOpen
+                  ? const EdgeInsets.all(30)
+                  : const EdgeInsets.only(bottom: 100.0, left: 30, right: 30),
+              child: Form(
+                key: _formKeyWifi,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    TextFieldWidget(
+                      hintText: 'Wifi ssid',
+                      obscureText: false,
+                      prefixIconData: null,
+                      suffixIconData: null,
+                      onChanged: (value) {
+                        // model.isValidEmail(value);
+                      },
+                      onSaved: (String value) {
+                        wifiSsid = value;
+                      },
+                      validator: (String value) {
+                        if (value.isEmpty) {
+                          return "Form cannot be empty";
+                        }
+                      },
+                      visible: true,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 60.0, left: 60.0, top: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  ButtonWidget(
-                    title: !_connected ? 'Pair with ESP' : "Connected",
-                    hasBorder: true,
-                    onPressed: () async{
-                      bool connected = await connectToespWifi();
-                      setState(() {
-                        _connected = connected;
-                      });
-                      exchangeDataWithEsp();
-                    },
-                  ),
-                ],
+                    const SizedBox(
+                      height: 15.0,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        TextFieldWidget(
+                          hintText: 'Password',
+                          obscureText: true,
+                          prefixIconData: Icons.lock_outline,
+                          onTapIcon: () {
+                            // model.isVisible = !model.isVisible;
+                            // model.notifyListeners();
+                          },
+                          suffixIconData: Icons.visibility_off,
+                          onSaved: (String value) {
+                            wifiPassword = value;
+                          },
+                          visible: true,
+                        ),
+                        const SizedBox(
+                          height: 40.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    ButtonWidget(
+                      title: !_connected ? 'Pair with ESP' : "Connected",
+                      hasBorder: true,
+                      onPressed: () async {
+                        bool connected = await connectToespWifi();
+                        setState(() {
+                          _connected = connected;
+                        });
+                        exchangeDataWithEsp();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(
-              height: 30.0,
+              height: 200.0,
             ),
           ],
         ));
