@@ -4,8 +4,10 @@ import 'package:mobile_app/widgets/waveWidget.dart';
 
 class HomePage extends StatefulWidget {
   final String deviceId;
+  final String email;
+  final String password;
 
-  const HomePage({Key key, this.deviceId}) : super(key: key);
+  const HomePage({Key key,  this.email, this.password, this.deviceId}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();

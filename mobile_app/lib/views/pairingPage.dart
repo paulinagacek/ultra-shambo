@@ -17,7 +17,10 @@ import '../widgets/textFieldWidget.dart';
 import 'homePage.dart';
 
 class PairingPage extends StatefulWidget {
-  const PairingPage({Key key}) : super(key: key);
+  final String email;
+  final String password;
+
+  const PairingPage({Key key, this.email, this.password}) : super(key: key);
 
   @override
   State<PairingPage> createState() => _PairingPageState();
@@ -248,7 +251,7 @@ class _PairingPageState extends State<PairingPage> {
 
                               // send device to api TODO
                               Navigator.of(context).pushReplacement(
-                                  CustomPageRoute(child: const HomePage()));
+                                  CustomPageRoute(child: HomePage(email: widget.email, password: widget.password, deviceId: deviceId)));
                             });
                           }
                         },

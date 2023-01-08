@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  String _deviceId = "";
   bool selected = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -178,23 +179,22 @@ class _LoginPageState extends State<LoginPage> {
 
                       bool logged = await azure.logUser(_email, _password);
                       if (!logged) {
-                        
                         print("unsuccesful login");
                         showAlertDialog(context, "Login error",
                             "Provided email or password is incorrect. Try again with correct data.");
                         return;
-                      } else {
-                        setState(() {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          selected = true;
-                        });
-                        Navigator.of(context).pushReplacement(CustomPageRoute(
-                            child: const HomePage(deviceId: "nnnn")));
                       }
-                      // if not paired
-                      // Navigator.of(context)
-                      //       .pushReplacement(CustomPageRoute(child: const PairingPage()));
-                      // else
+                      setState(() {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        selected = true;
+                      });
+                      if (_deviceId != "") {
+                        Navigator.of(context).pushReplacement(CustomPageRoute(
+                            child: HomePage(email: _email, password: _password, deviceId: _deviceId)));
+                      } else {
+                        Navigator.of(context).pushReplacement(
+                            CustomPageRoute(child: PairingPage(email: _email, password: _password)));
+                      }
                     },
                   ),
                   const SizedBox(
