@@ -39,20 +39,26 @@ Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
       sleep(const Duration(milliseconds: 250));
       attempt++;
     }
+
+    bool result = true;
     if (attempt == maxAttempts) {
-      await platform.invokeMethod('disconnect');
-      return false;
+      disconnect = false;
+      result = false;
     }
     print("Connected :)");
     if (disconnect) {
+      int attempt = 0;
+
       await platform.invokeMethod('disconnect');
-      while (await platform.invokeMethod('isConnected')) {
+      while (attempt < maxAttempts &&
+        await platform.invokeMethod('isConnected')) {
         print("Waiting for disconnect");
         sleep(const Duration(milliseconds: 250));
+        attempt++;
       }
       print("Disonnected :)");
     }
-    return true;
+    return result;
   } on PlatformException catch (e) {
     print("Connection error: '${e.message}'.");
   }
@@ -77,8 +83,8 @@ void exchangeDataWithEsp(ssid, password, dataCallback) {
 
 void Function(Uint8List) createdataHandler(dataCallback) {
   return (data) {
-  print("got data");
-  dataCallback(data);
+    print("got data");
+    dataCallback(data);
   };
 }
 
@@ -242,16 +248,23 @@ class _PairingPageState extends State<PairingPage> {
                               return;
                             }
 
-                            exchangeDataWithEsp(wifiSsid, wifiPassword, (data) async {
-                              String deviceId = String.fromCharCodes(data).trim();
+                            exchangeDataWithEsp(wifiSsid, wifiPassword,
+                                (data) async {
+                              String deviceId =
+                                  String.fromCharCodes(data).trim();
                               print(deviceId);
 
-                              const platform = MethodChannel('samples.flutter.dev/wificonnect');
+                              const platform = MethodChannel(
+                                  'samples.flutter.dev/wificonnect');
                               await platform.invokeMethod('disconnect');
 
                               // send device to api TODO
                               Navigator.of(context).pushReplacement(
-                                  CustomPageRoute(child: HomePage(email: widget.email, password: widget.password, deviceId: deviceId)));
+                                  CustomPageRoute(
+                                      child: HomePage(
+                                          email: widget.email,
+                                          password: widget.password,
+                                          deviceId: deviceId)));
                             });
                           }
                         },
