@@ -12,6 +12,7 @@ import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 
 import '../routes/CustomPageRoute.dart';
+import '../widgets/alertDialog.dart';
 import '../widgets/textFieldWidget.dart';
 import 'homePage.dart';
 
@@ -24,7 +25,7 @@ class PairingPage extends StatefulWidget {
 
 Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
   const platform = MethodChannel('samples.flutter.dev/wificonnect');
-  int maxAttempts = 80;
+  int maxAttempts = 40;
   try {
     await platform
         .invokeMethod('connectToWifi', {"SSID": ssid, "password": password});
@@ -230,6 +231,9 @@ class _PairingPageState extends State<PairingPage> {
                               disconnect: true);
                           if (!connectedToLocal) {
                             // do sth
+                            showAlertDialog(context, "Connection error",
+                                "Provided ssid or password is incorrect. Try again with correct data.");
+                            // Navigator.of(context).push(alert);
                             print("Cannot connect to local wifi");
                           } else {
                             print("Connected to local wifi" + wifiSsid);
@@ -242,7 +246,6 @@ class _PairingPageState extends State<PairingPage> {
                               print("Did not connect to esp");
                               return;
                             }
-
                             exchangeDataWithEsp(wifiSsid, wifiPassword);
                           }
                         },
