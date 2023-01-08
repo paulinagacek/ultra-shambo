@@ -49,7 +49,7 @@ class PhoneConnectionManager:
         request = conn.recv(1024).rstrip()
         wifi_data = self.__parse_wifi_data(str(request))
         conn.send(self.device_id)
-        time.sleep(1)
+        time.sleep(0.1)
         conn.close()
         s.close()
         return wifi_data
