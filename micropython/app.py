@@ -16,7 +16,7 @@ config = {
     'PASSWORD': 'iotiot420',
     # 'DEVICE_ID': 'shamboo_distance_meter',
     'HOSTNAME': 'shamboo.azure-devices.net',
-    'DEVICE_ID': 'esp32',
+    'DEVICE_ID': 'esp32SAS',
     'SAS_KEY': 'SharedAccessSignature sr=shamboo.azure-devices.net%2Fdevices%2Fesp32SAS&sig=RMLGnNT%2FEEhOQNyNma8%2F0Ar2wD%2FteMVPkAgVZJAjDCM%3D&se=2032766595',
     'CERT_PATH': 'flash/certs/esp32-public.pem',
     'KEY_PATH': 'flash/certs/esp32-private.pem'
@@ -102,9 +102,7 @@ class Application:
         print('Connected to Azure')
         for i in range(5):
             print("sending message")
-            self.client.publish(
-                topic=self.telemetry_topic, 
-                msg='{ "DeviceID": {}, "Distance": {} }'.format(config["DEVICE_ID"], 20.137))
+            self.client.publish(topic=self.telemetry_topic, msg='{ "distance": ' + str(20.137) + ', "device_id": ' + config['DEVICE_ID'] + ' }')
             time.sleep(1)
 
         print("waiting for message")
