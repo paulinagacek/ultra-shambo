@@ -11,7 +11,9 @@ import 'package:android_flutter_wifi/android_flutter_wifi.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 
+import '../routes/CustomPageRoute.dart';
 import '../widgets/textFieldWidget.dart';
+import 'homePage.dart';
 
 class PairingPage extends StatefulWidget {
   const PairingPage({Key key}) : super(key: key);
@@ -20,21 +22,31 @@ class PairingPage extends StatefulWidget {
   State<PairingPage> createState() => _PairingPageState();
 }
 
-Socket socket;
-String espSsid = "ESP WIFI";
-String espPassword = "iotiot420";
-int port = 8888;
-
-Future<bool> connectToespWifi() async {
+Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
   const platform = MethodChannel('samples.flutter.dev/wificonnect');
+  int maxAttempts = 80;
   try {
-    await platform.invokeMethod(
-        'connectToWifi', {"SSID": espSsid, "password": espPassword});
-    while (!(await platform.invokeMethod('isConnected'))) {
+    await platform
+        .invokeMethod('connectToWifi', {"SSID": ssid, "password": password});
+    int attempt = 0;
+    while (attempt < maxAttempts &&
+        !(await platform.invokeMethod('isConnected'))) {
       print("Waiting for connection");
       sleep(const Duration(milliseconds: 250));
+      attempt++;
+    }
+    if (attempt == maxAttempts) {
+      return false;
     }
     print("Connected :)");
+    if (disconnect) {
+      await platform.invokeMethod('disconnect');
+      while (await platform.invokeMethod('isConnected')) {
+        print("Waiting for disconnect");
+        sleep(const Duration(milliseconds: 250));
+      }
+      print("Disonnected :)");
+    }
     return true;
   } on PlatformException catch (e) {
     print("Connection error: '${e.message}'.");
@@ -42,21 +54,27 @@ Future<bool> connectToespWifi() async {
   return false;
 }
 
-void exchangeDataWithEsp() {
+Socket socket;
+int port = 8888;
+
+void exchangeDataWithEsp(ssid, password) {
+  print("<33333333333 ------------ <3333 ------ <3 <3>");
   Socket.connect("192.168.4.1", port).then((Socket sock) {
     socket = sock;
     socket.listen(dataHandler,
         onError: null, onDone: doneHandler, cancelOnError: false);
-    socket.write("Redmi Note 11;bananaski");
+    socket.write("$ssid;$password");
   }).catchError((Object e) {
     print("Unable to connect: $e");
   });
-  //Connect standard in to the socket
+  print("Waiting for deviceId");
 }
 
 void dataHandler(data) {
   print("got data");
-  print(String.fromCharCodes(data).trim());
+  String deviceId = String.fromCharCodes(data).trim();
+  print(deviceId);
+  sendToAzureAndGoToHomePage(deviceId);
 }
 
 errorHandler(Object error) {
@@ -67,10 +85,28 @@ void doneHandler() {
   socket.destroy();
 }
 
+sendToAzureAndGoToHomePage(deviceId) async {
+  const platform = MethodChannel('samples.flutter.dev/wificonnect');
+  await platform.invokeMethod('disconnect');
+
+  // send device to api TODO
+  // Navigator.of(context).pushReplacement(
+  //     CustomPageRoute(child: const HomePage()));
+}
+
 class _PairingPageState extends State<PairingPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _connected = false;
+  }
+
   bool _connected = false;
   String wifiSsid = "";
   String wifiPassword = "";
+  final String espSsid = "ESP WIFI";
+  final String espPassword = "iotiot420";
 
   final GlobalKey<FormState> _formKeyWifi = GlobalKey<FormState>();
 
@@ -104,7 +140,7 @@ class _PairingPageState extends State<PairingPage> {
             ),
             Padding(
               padding: keyboardOpen
-                  ? const EdgeInsets.only(top: 150.0)
+                  ? const EdgeInsets.only(top: 120.0)
                   : const EdgeInsets.only(top: 350.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -175,17 +211,43 @@ class _PairingPageState extends State<PairingPage> {
                     const SizedBox(
                       height: 5.0,
                     ),
-                    ButtonWidget(
-                      title: !_connected ? 'Pair with ESP' : "Connected",
-                      hasBorder: true,
-                      onPressed: () async {
-                        bool connected = await connectToespWifi();
-                        setState(() {
-                          _connected = connected;
-                        });
-                        exchangeDataWithEsp();
-                      },
-                    ),
+                    Visibility(
+                      visible: true, //!_connected,
+                      child: ButtonWidget(
+                        title:
+                            !_connected ? 'Pair with ESP' : "Connected to wifi",
+                        hasBorder: true,
+                        onPressed: () async {
+                          if (!_formKeyWifi.currentState.validate()) {
+                            return;
+                          }
+                          _formKeyWifi.currentState.save();
+                          print("wifi: " + wifiSsid + " " + wifiPassword);
+
+                          // connect to local wifi
+                          bool connectedToLocal = await connectToWifi(
+                              wifiSsid, wifiPassword,
+                              disconnect: true);
+                          if (!connectedToLocal) {
+                            // do sth
+                            print("Cannot connect to local wifi");
+                          } else {
+                            print("Connected to local wifi" + wifiSsid);
+                            bool connected =
+                                await connectToWifi(espSsid, espPassword);
+                            setState(() {
+                              _connected = connected;
+                            });
+                            if (!_connected) {
+                              print("Did not connect to esp");
+                              return;
+                            }
+
+                            exchangeDataWithEsp(wifiSsid, wifiPassword);
+                          }
+                        },
+                      ),
+                    )
                   ],
                 ),
               ),
