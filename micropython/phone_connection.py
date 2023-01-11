@@ -1,9 +1,11 @@
 import usocket as socket
+import time
 import network
 
 
-class ConnectionManager:
-    def __init__(self, port, ssid, password) -> None:
+class PhoneConnectionManager:
+    def __init__(self, device_id, port, ssid, password) -> None:
+        self.device_id = device_id
         self.port = port
         self.ssid = ""
         self.password = ""
@@ -14,22 +16,29 @@ class ConnectionManager:
             password=password, 
             max_clients=10)
 
+        self.wifi = None
+
     def start_ap_and_get_wifi_data(self):
         self.ap.active(True)
         print("APN started")
         self.ssid, self.password = self.__get_wifi_data()
+        print(self.ssid, self.password)
         print("APN stopped")
         self.ap.active(False)
 
     def wifi_connect(self):
         print(f"Connecting to {self.ssid}")
-        wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
-        if not wlan.isconnected():
-            wlan.connect(self.ssid, self.password)
-            while not wlan.isconnected():
+        self.wifi = network.WLAN(network.STA_IF)
+        self.wifi.active(True)
+        if not self.wifi.isconnected():
+            self.wifi.connect(self.ssid, self.password)
+            while not self.wifi.isconnected():
                 pass
         print(f"Connected")
+
+    def wifi_disconnect(self):
+        self.wifi.active(False)
+        self.wiki = None
 
     def __get_wifi_data(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,7 +48,8 @@ class ConnectionManager:
         conn, _ = s.accept()
         request = conn.recv(1024).rstrip()
         wifi_data = self.__parse_wifi_data(str(request))
-        conn.send('OK')
+        conn.send(self.device_id)
+        time.sleep(0.1)
         conn.close()
         s.close()
         return wifi_data
