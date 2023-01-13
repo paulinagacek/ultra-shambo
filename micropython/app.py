@@ -18,8 +18,8 @@ config = {
     'HOSTNAME': 'shamboo.azure-devices.net',
     'DEVICE_ID': 'esp32',
     'SAS_KEY': 'SharedAccessSignature sr=shamboo.azure-devices.net%2Fdevices%2Fesp32SAS&sig=RMLGnNT%2FEEhOQNyNma8%2F0Ar2wD%2FteMVPkAgVZJAjDCM%3D&se=2032766595',
-    'CERT_PATH': 'flash/certs/esp32-public.pem',
-    'KEY_PATH': 'flash/certs/esp32-private.pem'
+    'CERT_PATH': 'flash/certs/public.pem',
+    'KEY_PATH': 'flash/certs/private.pem'
 }
 
 
@@ -54,7 +54,7 @@ class Application:
         #     cs_args = connection_string.split(DELIMITER)
         #     dictionary = dict(arg.split(VALUE_SEPARATOR, 1) for arg in cs_args)
         #     return dictionary
-        issas = True
+        issas = False
 
         if issas:
             self.client = MQTTClient(
@@ -83,9 +83,9 @@ class Application:
 
     def run(self) -> None:
         print('start')
-        self.phoneConnectionManager.start_ap_and_get_wifi_data()
-        # self.phoneConnectionManager.ssid = 'Redmi Note 11'
-        # self.phoneConnectionManager.password = 'bananaski'
+        # self.phoneConnectionManager.start_ap_and_get_wifi_data()
+        self.phoneConnectionManager.ssid = 'Redmi Note 11'
+        self.phoneConnectionManager.password = 'bananaski'
         self.phoneConnectionManager.wifi_connect()
 
         # self.azureConnectionManager.connect()
@@ -93,22 +93,13 @@ class Application:
         # self.azureConnectionManager.disconnect()
         self.client.connect()
 
-        def callback_handler(topic, message_receive):
-            print("Received message")
-            print(message_receive)
-        self.client.set_callback(callback_handler)
-        self.client.subscribe(topic=self.c2d_topic)
-
         print('Connected to Azure')
         for i in range(5):
             print("sending message")
             self.client.publish(
                 topic=self.telemetry_topic, 
-                msg='{ "DeviceID": {}, "Distance": {} }'.format(config["DEVICE_ID"], 20.137))
+                msg='{ "device_id": ' + config["DEVICE_ID"] + ', "distance": ' + str(20.137) + ' }')
             time.sleep(1)
-
-        print("waiting for message")
-        self.client.wait_msg()
 
         for i in range(20):
             distance = self.distance_reader.read_distance()
