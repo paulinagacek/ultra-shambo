@@ -4,8 +4,10 @@ import 'package:mobile_app/widgets/waveWidget.dart';
 
 class HomePage extends StatefulWidget {
   final String deviceId;
+  final String email;
+  final String password;
 
-  const HomePage({Key key, this.deviceId}) : super(key: key);
+  const HomePage({Key key,  this.email, this.password, this.deviceId}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -15,7 +17,8 @@ class _HomePageState extends State<HomePage> {
   double fullPercent = 36;
   @override
   Widget build(BuildContext context) {
-    final String title = 'Your shamboo (${widget.deviceId}) is full in';
+    final String title =
+        'Your shamboo (${widget.deviceId ?? "none"}) is full in';
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
@@ -39,23 +42,26 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: size.height * 0.5),
+              padding:
+                  EdgeInsets.only(top: size.height * 0.5, left: 30, right: 30),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
+                  Flexible(
+                      child: Text(
                     title,
                     style: const TextStyle(
                       color: Global.white,
                       fontSize: 30.0,
                       fontWeight: FontWeight.w300,
                     ),
-                  ),
+                    textAlign: TextAlign.center,
+                  )),
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: size.height * 0.5 + 50),
+              padding: EdgeInsets.only(top: size.height * 0.5 + 90),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const <Widget>[
