@@ -3,7 +3,7 @@ import time
 import network
 
 
-class PhoneConnectionManager:
+class WiFiConnectionManager:
     def __init__(self, device_id, port, ssid, password) -> None:
         self.device_id = device_id
         self.port = port
@@ -30,15 +30,20 @@ class PhoneConnectionManager:
         print(f"Connecting to {self.ssid}")
         self.wifi = network.WLAN(network.STA_IF)
         self.wifi.active(True)
+        start = time.time()
         if not self.wifi.isconnected():
             self.wifi.connect(self.ssid, self.password)
             while not self.wifi.isconnected():
-                pass
-        print(f"Connected")
+                if time.time() - start > 30:
+                    print("Did not connect")
+                    self.wifi_disconnect()
+                    return False
+        print("Connected")
+        return True
 
     def wifi_disconnect(self):
         self.wifi.active(False)
-        self.wiki = None
+        self.wifi = None
 
     def __get_wifi_data(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
