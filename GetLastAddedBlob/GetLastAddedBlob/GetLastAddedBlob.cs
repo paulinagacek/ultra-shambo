@@ -38,13 +38,29 @@ namespace GetLastAddedBlob
             string connectionString = $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net";
             string containerName = "shamboo";
 
-            if (req.Query.Keys.Count == 0)
-            {
-                return new BadRequestObjectResult("Please pass a deviceID.");
-            }
             req.Query.TryGetValue("device_id", out var deviceID);
             req.Query.TryGetValue("email", out var userEmail);
             req.Query.TryGetValue("password", out var userPassword);
+
+            if (userPassword.Count == 0 || userEmail.Count == 0 || deviceID.Count == 0)
+
+            {
+                return new BadRequestObjectResult(-1);
+            }
+            
+            try
+            {
+                using HttpClient httpClient = new();
+                using HttpResponseMessage response = await httpClient.GetAsync($"https://shamboo-backend.azure-api.net/tableService/logUser?email={userEmail[0]}&password={userPassword[0]}");
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+
+            }
+            catch (HttpRequestException e)
+            {
+                return new BadRequestObjectResult(-1);
+            }
             
             var container = new BlobContainerClient(connectionString, containerName);            
             var blobs = container.GetBlobs()
