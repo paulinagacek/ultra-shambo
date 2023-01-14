@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:mobile_app/connection/azure_connection.dart';
 import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
 import 'package:android_flutter_wifi/android_flutter_wifi.dart';
@@ -109,8 +110,96 @@ class _PairingPageState extends State<PairingPage> {
   String wifiPassword = "";
   final String espSsid = "ESP WIFI";
   final String espPassword = "iotiot420";
+  String deviceId = "";
 
   final GlobalKey<FormState> _formKeyWifi = GlobalKey<FormState>();
+
+  void onPairButtonPress() async {
+    if (!_formKeyWifi.currentState.validate()) {
+      return;
+    }
+
+    if (deviceId != "") {
+      pairDevice();
+      return;
+    }
+    _formKeyWifi.currentState.save();
+    print("wifi: " + wifiSsid + " " + wifiPassword);
+
+
+    // connect to local wifi
+    bool connectedToLocal = await connectToWifi(
+        wifiSsid, wifiPassword,
+        disconnect: true);
+    if (!connectedToLocal) {
+      // do sth
+      showAlertDialog(context, "Connection error",
+          "Provided ssid or password is incorrect. Try again with correct data.");
+      // Navigator.of(context).push(alert);
+      print("Cannot connect to local wifi");
+      return;
+    }
+    print("Connected to local wifi" + wifiSsid);
+    bool connected =
+    await connectToWifi(espSsid, espPassword);
+    setState(() {
+      _connected = connected;
+    });
+    if (!_connected) {
+      print("Did not connect to esp");
+      return;
+    }
+
+
+    exchangeDataWithEsp(wifiSsid, wifiPassword,
+      (data) async {
+        deviceId = String.fromCharCodes(data).trim();
+        print(deviceId);
+
+        const platform = MethodChannel(
+            'samples.flutter.dev/wificonnect');
+        await platform.invokeMethod('disconnect');
+        var attempt = 0;
+        while (attempt < 40 &&
+            await platform.invokeMethod('isConnected')) {
+          print("Waiting for disconnect");
+          sleep(const Duration(milliseconds: 250));
+          attempt++;
+        }
+        print("Disonnected :)");
+        pairDevice();
+      }
+    );
+  }
+
+  void pairDevice() async {
+
+    var azure = AzureConnection();
+    if(! await azure.checkInternetConnection()) {
+      await connectToWifi(
+          wifiSsid, wifiPassword,
+          disconnect: false);
+    }
+    if(! await azure.checkInternetConnection()) {
+      print("No internet");
+      showAlertDialog(context, "Internet error",
+          "Check your internet connection.");
+      return;
+    }
+    bool paired = await azure.pairDevice(widget.email, widget.password, deviceId);
+    if (!paired) {
+      print("Error while pairing");
+      showAlertDialog(context, "Pairing error",
+          "Pls try again");
+      return;
+    }
+    Navigator.of(context).pushReplacement(
+        CustomPageRoute(
+            child: HomePage(
+                email: widget.email,
+                password: widget.password,
+                deviceId: deviceId)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -219,55 +308,7 @@ class _PairingPageState extends State<PairingPage> {
                         title:
                             !_connected ? 'Pair with ESP' : "Connected to wifi",
                         hasBorder: true,
-                        onPressed: () async {
-                          if (!_formKeyWifi.currentState.validate()) {
-                            return;
-                          }
-                          _formKeyWifi.currentState.save();
-                          print("wifi: " + wifiSsid + " " + wifiPassword);
-
-                          // connect to local wifi
-                          bool connectedToLocal = await connectToWifi(
-                              wifiSsid, wifiPassword,
-                              disconnect: true);
-                          if (!connectedToLocal) {
-                            // do sth
-                            showAlertDialog(context, "Connection error",
-                                "Provided ssid or password is incorrect. Try again with correct data.");
-                            // Navigator.of(context).push(alert);
-                            print("Cannot connect to local wifi");
-                          } else {
-                            print("Connected to local wifi" + wifiSsid);
-                            bool connected =
-                                await connectToWifi(espSsid, espPassword);
-                            setState(() {
-                              _connected = connected;
-                            });
-                            if (!_connected) {
-                              print("Did not connect to esp");
-                              return;
-                            }
-
-                            exchangeDataWithEsp(wifiSsid, wifiPassword,
-                                (data) async {
-                              String deviceId =
-                                  String.fromCharCodes(data).trim();
-                              print(deviceId);
-
-                              const platform = MethodChannel(
-                                  'samples.flutter.dev/wificonnect');
-                              await platform.invokeMethod('disconnect');
-
-                              // send device to api TODO
-                              Navigator.of(context).pushReplacement(
-                                  CustomPageRoute(
-                                      child: HomePage(
-                                          email: widget.email,
-                                          password: widget.password,
-                                          deviceId: deviceId)));
-                            });
-                          }
-                        },
+                        onPressed: onPairButtonPress
                       ),
                     )
                   ],

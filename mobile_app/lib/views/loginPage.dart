@@ -176,7 +176,12 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       _formKey.currentState.save();
                       var azure = AzureConnection();
-
+                      if(! await azure.checkInternetConnection()) {
+                        print("No internet");
+                        showAlertDialog(context, "Internet error",
+                            "Check your internet connection.");
+                        return;
+                      }
                       bool logged = await azure.logUser(_email, _password);
                       if (!logged) {
                         print("unsuccesful login");
@@ -188,12 +193,16 @@ class _LoginPageState extends State<LoginPage> {
                         FocusManager.instance.primaryFocus?.unfocus();
                         selected = true;
                       });
-                      if (_deviceId != "") {
-                        Navigator.of(context).pushReplacement(CustomPageRoute(
-                            child: HomePage(email: _email, password: _password, deviceId: _deviceId)));
+                      String deviceId = await azure.getPairedDevice(_email, _password);
+                      if(deviceId != "") {
+                        Navigator.of(context)
+                            .pushReplacement(CustomPageRoute(child: HomePage(email: _email,
+                            password: _password, deviceId: deviceId,)));
                       } else {
-                        Navigator.of(context).pushReplacement(
-                            CustomPageRoute(child: PairingPage(email: _email, password: _password)));
+                        print("no device");
+                        Navigator.of(context)
+                            .pushReplacement(CustomPageRoute(child: PairingPage(email: _email,
+                          password: _password)));
                       }
                     },
                   ),
