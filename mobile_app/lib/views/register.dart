@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/loginModel.dart';
 import 'package:mobile_app/routes/CustomPageRoute.dart';
+import 'package:mobile_app/views/homePage.dart';
 import 'package:mobile_app/views/loginPage.dart';
 import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
@@ -8,6 +9,9 @@ import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/widgets/textFieldWidget.dart';
 import 'package:mobile_app/widgets/waveWidget.dart';
 import 'package:provider/provider.dart';
+
+import '../connection/azure_connection.dart';
+import '../widgets/alertDialog.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key key}) : super(key: key);
@@ -194,19 +198,32 @@ class _RegisterPageState extends State<RegisterPage> {
                     title: 'Create account',
                     hasBorder: false,
                     visible: !selected,
-                    onPressed: () {
+                    onPressed: () async {
                       if (!_formKey.currentState.validate()) {
                         return;
                       }
                       _formKey.currentState.save();
-                      // send to API
+                      var azure = AzureConnection();
+                      if(! await azure.checkInternetConnection()) {
+                        print("No internet");
+                        showAlertDialog(context, "Internet error",
+                            "Check your internet connection.");
+                        return;
+                      }
+                      bool register = await azure.registerUser(_email, _password.text);
+                      if(!register){
+                        showAlertDialog(context, "Registration error",
+                            "This account already exists");
+                        print("Nieduana");
+                        return;
+                      }
                       setState(() {
                         FocusManager.instance.primaryFocus?.unfocus();
                         selected = true;
                       });
-                      // if everything ok
                       Navigator.of(context)
-                            .pushReplacement(CustomPageRoute(child: const PairingPage()));
+                          .pushReplacement(CustomPageRoute(child: PairingPage(email: _email,
+                        password: _password.text)));
                     },
                   ),
                   const SizedBox(

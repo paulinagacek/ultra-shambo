@@ -14,8 +14,9 @@ class MyApp extends StatelessWidget {
       create: (context) => LoginModel(),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: PairingPage(),
+        // home: PairingPage(),
         // home: HomePage(),
+        home: LoginPage(),
       ),
     );
   }

@@ -6,10 +6,13 @@ class AzureConnectionManager:
         self.client = MQTTClient(
             client_id=device_id,
             server=hostname,
-            user=f'{hostname}/{device_id}',
+            keepalive=120,
+            user=hostname+'/'+device_id+'/?api-version=2021-04-12',
             password=sas_key,
-            keepalive=60,
+            ssl=True,
+            port=8883
         )
+
 
     def connect(self):
         self.client.connect()

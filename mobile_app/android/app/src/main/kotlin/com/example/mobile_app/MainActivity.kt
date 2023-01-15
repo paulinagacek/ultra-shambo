@@ -24,6 +24,7 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
                 call, result ->
             if (call.method == "connectToWifi") {
+                connected = false
                 val temp = connectToWifi(call.argument<String>("SSID").toString(), call.argument<String>("password").toString())
                 print("Connecting")
                 result.success(temp)

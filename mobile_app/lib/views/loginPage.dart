@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/connection/azure_connection.dart';
 import 'package:mobile_app/views/homePage.dart';
 import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/views/register.dart';
@@ -10,6 +11,7 @@ import 'package:mobile_app/widgets/textFieldWidget.dart';
 import 'package:mobile_app/widgets/waveWidget.dart';
 import 'package:provider/provider.dart';
 import '../routes/CustomPageRoute.dart';
+import '../widgets/alertDialog.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -21,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+  String _deviceId = "";
   bool selected = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -46,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
             top: selected
                 ? size.height
                 : keyboardOpen
-                    ? -size.height / 3.2
+                    ? -size.height / 3.0
                     : 0.0,
             child: WaveWidget(
               size: size,
@@ -55,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 120.0),
+            padding: const EdgeInsets.only(top: 130.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[
@@ -71,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 180.0),
+            padding: const EdgeInsets.only(top: 190.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[
@@ -167,22 +170,40 @@ class _LoginPageState extends State<LoginPage> {
                     title: 'Login',
                     hasBorder: false,
                     visible: !selected,
-                    onPressed: () {
+                    onPressed: () async {
                       if (!_formKey.currentState.validate()) {
                         return;
                       }
                       _formKey.currentState.save();
-                      // send to API
+                      var azure = AzureConnection();
+                      if(! await azure.checkInternetConnection()) {
+                        print("No internet");
+                        showAlertDialog(context, "Internet error",
+                            "Check your internet connection.");
+                        return;
+                      }
+                      bool logged = await azure.logUser(_email, _password);
+                      if (!logged) {
+                        print("unsuccesful login");
+                        showAlertDialog(context, "Login error",
+                            "Provided email or password is incorrect. Try again with correct data.");
+                        return;
+                      }
                       setState(() {
                         FocusManager.instance.primaryFocus?.unfocus();
                         selected = true;
                       });
-                      // if not paired
-                      // Navigator.of(context)
-                      //       .pushReplacement(CustomPageRoute(child: const PairingPage()));
-                      // else
-                      Navigator.of(context)
-                            .pushReplacement(CustomPageRoute(child: const HomePage()));
+                      String deviceId = await azure.getPairedDevice(_email, _password);
+                      if(deviceId != "") {
+                        Navigator.of(context)
+                            .pushReplacement(CustomPageRoute(child: HomePage(email: _email,
+                            password: _password, deviceId: deviceId,)));
+                      } else {
+                        print("no device");
+                        Navigator.of(context)
+                            .pushReplacement(CustomPageRoute(child: PairingPage(email: _email,
+                          password: _password)));
+                      }
                     },
                   ),
                   const SizedBox(
@@ -194,8 +215,8 @@ class _LoginPageState extends State<LoginPage> {
                     visible: !selected,
                     onPressed: () {
                       debugPrint('Sign up click');
-                      Navigator.of(context)
-                          .pushReplacement(CustomPageRoute(child: const RegisterPage()));
+                      Navigator.of(context).pushReplacement(
+                          CustomPageRoute(child: const RegisterPage()));
                     },
                   ),
                 ],
