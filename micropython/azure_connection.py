@@ -13,7 +13,6 @@ class AzureConnectionManager:
             port=8883
         )
 
-
     def connect(self):
         self.client.connect()
 

@@ -2,7 +2,6 @@ import time
 from read_distance import DistanceReader
 from wifi_connection import WiFiConnectionManager
 from azure_connection import AzureConnectionManager
-from umqtt.robust import MQTTClient
 import os
 
 config = {
@@ -34,8 +33,6 @@ class Application:
         self.telemetry_topic = 'devices/' + \
             config["DEVICE_ID"] + '/messages/events/' + \
             '$.ct=application%2Fjson&$.ce=utf-8'
-        self.c2d_topic = 'devices/' + \
-            config["DEVICE_ID"] + '/messages/devicebound/#'
 
     def get_wifi_data(self):
         try:
@@ -50,11 +47,6 @@ class Application:
             self.wifiConnectionManager.start_ap_and_get_wifi_data()
             with open('wifi_data.txt', 'w') as f:
                 f.write(self.wifiConnectionManager.ssid + "\n" + self.wifiConnectionManager.password)
-
-
-    def reset_password(self):
-        if os.path.exists('wifi_data.txt'):
-            os.remove('wifi_data.txt')
 
     def run(self) -> None:
         print('start')
@@ -71,7 +63,7 @@ class Application:
             self.azureConnectionManager.send(
                 self.telemetry_topic, '{ "device_id": "' + config["DEVICE_ID"] + '", "distance": ' + str(distance) + ' }')
             print('Distance (cm): ', distance)
-            time.sleep(15)  # wait 1 second
+            time.sleep(15)  # wait 15 second
 
         self.azureConnectionManager.disconnect()
         self.wifiConnectionManager.wifi_disconnect()
@@ -83,3 +75,7 @@ app = Application(config)
 
 def run():
     app.run()
+
+def reset_password():
+    if os.path.exists('wifi_data.txt'):
+        os.remove('wifi_data.txt')
