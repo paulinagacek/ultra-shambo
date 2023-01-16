@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double _distance = 50;
-  double _fillPercentage = 0;
+  double _fillPercentage = 75;
   Timer timer;
   var azure = AzureConnection();
 
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final String title =
-        'Your shamboo (${widget.deviceId}) is full in';
+        'Your shamboo is away by';
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    _distance.toString(),
+                    "$_distance cm",
                     style: const TextStyle(
                       color: Global.white,
                       fontSize: 40.0,

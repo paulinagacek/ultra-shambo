@@ -8,8 +8,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:mobile_app/connection/azure_connection.dart';
 import 'package:mobile_app/globals.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
-import 'package:android_flutter_wifi/android_flutter_wifi.dart';
-import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 
 import '../routes/CustomPageRoute.dart';
@@ -111,10 +109,12 @@ class _PairingPageState extends State<PairingPage> {
   final String espSsid = "ESP WIFI";
   final String espPassword = "iotiot420";
   String deviceId = "";
+  var azure = AzureConnection();
 
   final GlobalKey<FormState> _formKeyWifi = GlobalKey<FormState>();
 
   void onPairButtonPress() async {
+
     if (!_formKeyWifi.currentState.validate()) {
       return;
     }
@@ -126,7 +126,12 @@ class _PairingPageState extends State<PairingPage> {
     _formKeyWifi.currentState.save();
     print("wifi: " + wifiSsid + " " + wifiPassword);
 
-
+    if(! await azure.isWifiOn()) {
+      print("No wifi");
+      showAlertDialog(context, "Wifi disabled",
+          "Please enable wifi");
+      return;
+    }
     // connect to local wifi
     bool connectedToLocal = await connectToWifi(
         wifiSsid, wifiPassword,
@@ -173,8 +178,6 @@ class _PairingPageState extends State<PairingPage> {
   }
 
   void pairDevice() async {
-
-    var azure = AzureConnection();
     if(! await azure.checkInternetConnection()) {
       await connectToWifi(
           wifiSsid, wifiPassword,
@@ -288,7 +291,7 @@ class _PairingPageState extends State<PairingPage> {
                             // model.isVisible = !model.isVisible;
                             // model.notifyListeners();
                           },
-                          suffixIconData: Icons.visibility_off,
+                          // suffixIconData: Icons.visibility_off,
                           onSaved: (String value) {
                             wifiPassword = value;
                           },

@@ -43,8 +43,8 @@ class Application:
                 self.wifiConnectionManager.password = lines[1].strip()
         except Exception as e:
             print(e)
-            print("Writing to saved file")
             self.wifiConnectionManager.start_ap_and_get_wifi_data()
+            print("Writing to saved file")
             with open('wifi_data.txt', 'w') as f:
                 f.write(self.wifiConnectionManager.ssid + "\n" + self.wifiConnectionManager.password)
 

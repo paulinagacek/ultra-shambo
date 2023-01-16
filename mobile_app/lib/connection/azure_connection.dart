@@ -1,11 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:android_flutter_wifi/android_flutter_wifi.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class AzureConnection {
+  AzureConnection() {
+    AndroidFlutterWifi.init();
+  }
+
+  Future<void> enableWifi() async {
+    await AndroidFlutterWifi.enableWifi();
+  }
+
+  Future<bool> isWifiOn() async{
+    return await AndroidFlutterWifi.isWifiEnabled();
+  }
+
   Future<bool> checkInternetConnection() async {
     return await InternetConnectionChecker().hasConnection;
   }

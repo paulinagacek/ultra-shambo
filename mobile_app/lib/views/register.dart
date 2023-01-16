@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/loginModel.dart';
 import 'package:mobile_app/routes/CustomPageRoute.dart';
-import 'package:mobile_app/views/homePage.dart';
 import 'package:mobile_app/views/loginPage.dart';
 import 'package:mobile_app/views/pairingPage.dart';
 import 'package:mobile_app/widgets/buttonWidget.dart';
@@ -144,9 +143,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           model.notifyListeners();
                         },
                         validator: (String value) {
-                          // if (value.isEmpty) {
-                          //   return "Form cannot be empty";
-                          // }
+                          if (value.isEmpty) {
+                            return "Form cannot be empty";
+                          }
                           // if (value.length < 8) {
                           //   return "Password is too short";
                           // }
@@ -177,15 +176,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           model.notifyListeners();
                         },
                         validator: (String value) {
-                          // if (value.isEmpty) {
-                          //   return "Form cannot be empty";
-                          // }
+                          if (value.isEmpty) {
+                            return "Form cannot be empty";
+                          }
                           // if (value.length < 8) {
                           //   return "Password is too short";
                           // }
-                          // if (_password.text!=_confirmpassword.text) {
-                          //   return "Provided passwords are not the same";
-                          // }
+                          if (_password.text!=_confirmpassword.text) {
+                            return "Provided passwords are not the same";
+                          }
                         },
                         visible: !selected,
                       ),

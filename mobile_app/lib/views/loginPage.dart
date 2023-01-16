@@ -139,6 +139,11 @@ class _LoginPageState extends State<LoginPage> {
                         onSaved: (String value) {
                           _password = value;
                         },
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return "Form cannot be empty";
+                          }
+                        },
                         visible: !selected,
                       ),
                       const SizedBox(
