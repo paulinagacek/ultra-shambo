@@ -14,6 +14,7 @@ import '../routes/CustomPageRoute.dart';
 import '../widgets/alertDialog.dart';
 import '../widgets/textFieldWidget.dart';
 import 'homePage.dart';
+import 'loginPage.dart';
 
 class PairingPage extends StatefulWidget {
   final String email;
@@ -27,7 +28,7 @@ class PairingPage extends StatefulWidget {
 
 Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
   const platform = MethodChannel('samples.flutter.dev/wificonnect');
-  int maxAttempts = 40;
+  int maxAttempts = 60;
   try {
     await platform
         .invokeMethod('connectToWifi', {"SSID": ssid, "password": password});
@@ -49,8 +50,8 @@ Future<bool> connectToWifi(ssid, password, {bool disconnect = false}) async {
       int attempt = 0;
 
       await platform.invokeMethod('disconnect');
-      while (attempt < maxAttempts &&
-        await platform.invokeMethod('isConnected')) {
+      while (
+          attempt < maxAttempts && await platform.invokeMethod('isConnected')) {
         print("Waiting for disconnect");
         sleep(const Duration(milliseconds: 250));
         attempt++;
@@ -68,7 +69,6 @@ Socket socket;
 int port = 8888;
 
 void exchangeDataWithEsp(ssid, password, dataCallback) {
-  print("<33333333333 ------------ <3333 ------ <3 <3>");
   Socket.connect("192.168.4.1", port).then((Socket sock) {
     socket = sock;
     socket.listen(createdataHandler(dataCallback),
@@ -98,7 +98,6 @@ void doneHandler() {
 class _PairingPageState extends State<PairingPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _connected = false;
   }
@@ -114,7 +113,6 @@ class _PairingPageState extends State<PairingPage> {
   final GlobalKey<FormState> _formKeyWifi = GlobalKey<FormState>();
 
   void onPairButtonPress() async {
-
     if (!_formKeyWifi.currentState.validate()) {
       return;
     }
@@ -126,16 +124,14 @@ class _PairingPageState extends State<PairingPage> {
     _formKeyWifi.currentState.save();
     print("wifi: " + wifiSsid + " " + wifiPassword);
 
-    if(! await azure.isWifiOn()) {
+    if (!await azure.isWifiOn()) {
       print("No wifi");
-      showAlertDialog(context, "Wifi disabled",
-          "Please enable wifi");
+      showAlertDialog(context, "Wifi disabled", "Please enable wifi");
       return;
     }
     // connect to local wifi
-    bool connectedToLocal = await connectToWifi(
-        wifiSsid, wifiPassword,
-        disconnect: true);
+    bool connectedToLocal =
+        await connectToWifi(wifiSsid, wifiPassword, disconnect: true);
     if (!connectedToLocal) {
       // do sth
       showAlertDialog(context, "Connection error",
@@ -145,8 +141,7 @@ class _PairingPageState extends State<PairingPage> {
       return;
     }
     print("Connected to local wifi" + wifiSsid);
-    bool connected =
-    await connectToWifi(espSsid, espPassword);
+    bool connected = await connectToWifi(espSsid, espPassword);
     setState(() {
       _connected = connected;
     });
@@ -155,53 +150,45 @@ class _PairingPageState extends State<PairingPage> {
       return;
     }
 
+    exchangeDataWithEsp(wifiSsid, wifiPassword, (data) async {
+      deviceId = String.fromCharCodes(data).trim();
+      print(deviceId);
 
-    exchangeDataWithEsp(wifiSsid, wifiPassword,
-      (data) async {
-        deviceId = String.fromCharCodes(data).trim();
-        print(deviceId);
-
-        const platform = MethodChannel(
-            'samples.flutter.dev/wificonnect');
-        await platform.invokeMethod('disconnect');
-        var attempt = 0;
-        while (attempt < 40 &&
-            await platform.invokeMethod('isConnected')) {
-          print("Waiting for disconnect");
-          sleep(const Duration(milliseconds: 250));
-          attempt++;
-        }
-        print("Disonnected :)");
-        pairDevice();
+      const platform = MethodChannel('samples.flutter.dev/wificonnect');
+      await platform.invokeMethod('disconnect');
+      var attempt = 0;
+      while (attempt < 60 && await platform.invokeMethod('isConnected')) {
+        print("Waiting for disconnect");
+        sleep(const Duration(milliseconds: 250));
+        attempt++;
       }
-    );
+      print("Disonnected :)");
+      pairDevice();
+    });
   }
 
   void pairDevice() async {
-    if(! await azure.checkInternetConnection()) {
-      await connectToWifi(
-          wifiSsid, wifiPassword,
-          disconnect: false);
+    if (!await azure.checkInternetConnection()) {
+      await connectToWifi(wifiSsid, wifiPassword, disconnect: false);
     }
-    if(! await azure.checkInternetConnection()) {
+    if (!await azure.checkInternetConnection()) {
       print("No internet");
-      showAlertDialog(context, "Internet error",
-          "Check your internet connection.");
+      showAlertDialog(
+          context, "Internet error", "Check your internet connection.");
       return;
     }
-    bool paired = await azure.pairDevice(widget.email, widget.password, deviceId);
+    bool paired =
+        await azure.pairDevice(widget.email, widget.password, deviceId);
     if (!paired) {
       print("Error while pairing");
-      showAlertDialog(context, "Pairing error",
-          "Pls try again");
+      showAlertDialog(context, "Pairing error", "Pls try again");
       return;
     }
-    Navigator.of(context).pushReplacement(
-        CustomPageRoute(
-            child: HomePage(
-                email: widget.email,
-                password: widget.password,
-                deviceId: deviceId)));
+    Navigator.of(context).pushReplacement(CustomPageRoute(
+        child: HomePage(
+            email: widget.email,
+            password: widget.password,
+            deviceId: deviceId)));
   }
 
   @override
@@ -234,7 +221,7 @@ class _PairingPageState extends State<PairingPage> {
             ),
             Padding(
               padding: keyboardOpen
-                  ? const EdgeInsets.only(top: 120.0)
+                  ? const EdgeInsets.only(top: 100.0)
                   : const EdgeInsets.only(top: 350.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -253,7 +240,7 @@ class _PairingPageState extends State<PairingPage> {
             Padding(
               padding: keyboardOpen
                   ? const EdgeInsets.all(30)
-                  : const EdgeInsets.only(bottom: 100.0, left: 30, right: 30),
+                  : const EdgeInsets.only(bottom: 40.0, left: 30, right: 30),
               child: Form(
                 key: _formKeyWifi,
                 child: Column(
@@ -308,18 +295,25 @@ class _PairingPageState extends State<PairingPage> {
                     Visibility(
                       visible: true, //!_connected,
                       child: ButtonWidget(
-                        title:
-                            !_connected ? 'Pair with ESP' : "Connected to wifi",
+                          title: !_connected
+                              ? 'Pair with ESP'
+                              : "Connected to wifi",
+                          hasBorder: true,
+                          onPressed: onPairButtonPress),
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    ButtonWidget(
+                        title: 'Log out',
                         hasBorder: true,
-                        onPressed: onPairButtonPress
-                      ),
-                    )
+                        onPressed:  () {
+                    Navigator.of(context).pushReplacement(
+                        CustomPageRoute(child: const LoginPage()));
+                  }),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 200.0,
             ),
           ],
         ));

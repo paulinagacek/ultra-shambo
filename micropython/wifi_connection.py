@@ -27,12 +27,12 @@ class WiFiConnectionManager:
         self.ap.active(False)
 
     def __get_wifi_data(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(('', self.port))
-        s.listen(5)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create STREAM TCP socket
+        s.bind(('', self.port)) # bind socket with any IP and port
+        s.listen(5) # the number of unaccepted connections 
 
         conn, _ = s.accept()
-        request = conn.recv(1024).rstrip()
+        request = conn.recv(1024).rstrip() # receive msg
         wifi_data = self.__parse_wifi_data(str(request))
         conn.send(self.device_id)
         time.sleep(0.2)

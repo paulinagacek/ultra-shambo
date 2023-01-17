@@ -35,6 +35,7 @@ class Application:
             '$.ct=application%2Fjson&$.ce=utf-8'
 
     def get_wifi_data(self):
+        '''Get wifi data from the file.'''
         try:
             with open('wifi_data.txt', 'r') as f:
                 print("Reading saved")
