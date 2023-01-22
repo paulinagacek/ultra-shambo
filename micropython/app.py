@@ -1,8 +1,11 @@
+import os
 import time
+import machine
 from read_distance import DistanceReader
 from wifi_connection import WiFiConnectionManager
-from azure_connection import AzureConnectionManager
-import os
+from azure_connection import AzureConnectionManager, AzureConnectionManagerHttps
+import binascii
+
 
 config = {
     'TRIG_PIN': 18,
@@ -10,10 +13,12 @@ config = {
     'PORT': 8888,
     'SSID': 'ESP WIFI',
     'PASSWORD': 'iotiot420',
-    'HOSTNAME': 'shamboo.azure-devices.net',
-    'DEVICE_ID': 'esp32SAS',
-    'SAS_KEY': 'SharedAccessSignature sr=shamboo.azure-devices.net%2Fdevices%2Fesp32SAS&sig=RMLGnNT%2FEEhOQNyNma8%2F0Ar2wD%2FteMVPkAgVZJAjDCM%3D&se=2032766595',
+    # 'HOSTNAME': 'shamboo.azure-devices.net',
+    'DEVICE_ID': binascii.hexlify(machine.unique_id()).decode(),
+    # 'DEVICE_ID': 'esp32SAS',
+    # 'SAS_KEY': 'SharedAccessSignature sr=shamboo.azure-devices.net%2Fdevices%2Fesp32SAS&sig=RMLGnNT%2FEEhOQNyNma8%2F0Ar2wD%2FteMVPkAgVZJAjDCM%3D&se=2032766595',
 }
+
 
 class Application:
     def __init__(self, config) -> None:
@@ -25,17 +30,10 @@ class Application:
             config['PORT'],
             config['SSID'],
             config['PASSWORD'])
-        self.azureConnectionManager = AzureConnectionManager(
-            config['DEVICE_ID'],
-            config['HOSTNAME'],
-            config['SAS_KEY'])
 
-        self.telemetry_topic = 'devices/' + \
-            config["DEVICE_ID"] + '/messages/events/' + \
-            '$.ct=application%2Fjson&$.ce=utf-8'
+        self.azureConnectionManagerHttps = AzureConnectionManagerHttps(config['DEVICE_ID'])
 
     def get_wifi_data(self):
-        '''Get wifi data from the file.'''
         try:
             with open('wifi_data.txt', 'r') as f:
                 print("Reading saved")
@@ -52,21 +50,15 @@ class Application:
     def run(self) -> None:
         print('start')
         self.get_wifi_data()
-        # self.wifiConnectionManager.start_ap_and_get_wifi_data()
         while not self.wifiConnectionManager.wifi_connect():
             self.wifiConnectionManager.start_ap_and_get_wifi_data()
-        self.azureConnectionManager.connect()
-        print('Connected to Azure')
 
         for i in range(20):
             distance = self.distance_reader.read_distance()
-            print("sending message")
-            self.azureConnectionManager.send(
-                self.telemetry_topic, '{ "device_id": "' + config["DEVICE_ID"] + '", "distance": ' + str(distance) + ' }')
             print('Distance (cm): ', distance)
+            self.azureConnectionManagerHttps.send_distance(distance)
             time.sleep(15)  # wait 15 second
 
-        self.azureConnectionManager.disconnect()
         self.wifiConnectionManager.wifi_disconnect()
         print('finish')
 
@@ -78,5 +70,7 @@ def run():
     app.run()
 
 def reset_password():
-    if os.path.exists('wifi_data.txt'):
-        os.remove('wifi_data.txt')
+    try:
+        os.remove("wifi_data.txt")
+    except:
+        pass
