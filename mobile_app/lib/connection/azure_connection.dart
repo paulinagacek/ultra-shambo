@@ -51,7 +51,7 @@ class AzureConnection {
     double result = -1;
     try {
       final response = await http
-          .get(Uri.parse('https://shamboo-backend.azure-api.net/readBlobApp/getLastAddedBlob?email=$email&password=$password&device_id=$deviceId'));
+          .get(Uri.parse('https://shamboo-backend.azure-api.net/readBlobApp/GetLastAddedDistance?email=$email&password=$password&device_id=$deviceId'));
       print(response.body);
       result = double.parse(response?.body ?? "-1");
     } catch (e) {

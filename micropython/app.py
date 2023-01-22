@@ -3,7 +3,7 @@ import time
 import machine
 from read_distance import DistanceReader
 from wifi_connection import WiFiConnectionManager
-from azure_connection import AzureConnectionManager, AzureConnectionManagerHttps
+from azure_connection import AzureConnectionManagerHttps
 import binascii
 
 
