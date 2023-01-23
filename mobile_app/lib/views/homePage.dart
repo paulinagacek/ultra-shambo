@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     timer = Timer.periodic(
-        const Duration(seconds: 15), (Timer t) => updateDistance());
+        const Duration(seconds: 5), (Timer t) => updateDistance());
     updateDistance();
   }
 

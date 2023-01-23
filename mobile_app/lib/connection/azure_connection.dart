@@ -49,15 +49,26 @@ class AzureConnection {
 
   Future<double> getLastRead(String email, String password, String deviceId) async {
     double result = -1;
+    final body = {
+      'Email': email,
+      'Password': password,
+      'DeviceId': deviceId,
+    };
+    print(body);
+    final jsonString = json.encode(body);
+    final uri = Uri.parse('https://readblobapp.azurewebsites.net/api/GetLastAddedDistance?clientId=apim-shamboo-backend');
+    final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+    Response response;
     try {
-      final response = await http
-          .get(Uri.parse('https://shamboo-backend.azure-api.net/readBlobApp/GetLastAddedDistance?email=$email&password=$password&device_id=$deviceId'));
+      response = await http
+          .put(uri, headers: headers, body: jsonString);
       print(response.body);
       result = double.parse(response?.body ?? "-1");
     } catch (e) {
       print(e);
     }
     return result;
+
   }
 
   Future<bool> registerUser(String email, String password) async {
