@@ -22,7 +22,7 @@ namespace GetLastAddedBlob
             //creds for connection
             string accountName = "databaseshamboo";
             string accountKey = "nY4AF++rbHrDT4yQ/XUsFdytvUJUBxNN+4rpeZ6RB8YbjjjhaaKvgM8dDyzuJYk7xY+6tEIXkefw+AStF9RmMA==";
-            
+
             //creds for blob
             string connectionString = $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net";
             string containerName = "shamboo";
@@ -36,7 +36,7 @@ namespace GetLastAddedBlob
             {
                 return new BadRequestObjectResult(-1);
             }
-            
+
             try
             {
                 using HttpClient httpClient = new();
@@ -50,13 +50,13 @@ namespace GetLastAddedBlob
             {
                 return new BadRequestObjectResult(-1);
             }
-            
-            var container = new BlobContainerClient(connectionString, containerName);            
+
+            var container = new BlobContainerClient(connectionString, containerName);
             var blobs = container.GetBlobs()
                                  .Where(b => b.Properties.CreatedOn > DateTime.Now.AddDays(-7))
                                  .OrderByDescending(b => b.Properties.CreatedOn)
                                  .ToList();
-            
+
             foreach (var blob in blobs)
             {
                 BlobClient blobClient = container.GetBlobClient(blob.Name);
@@ -79,8 +79,8 @@ namespace GetLastAddedBlob
                 {
                     //Catches incorrect messages
                     continue;
-                }                
-                
+                }
+
             }
 
             return new BadRequestObjectResult(-1);

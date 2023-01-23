@@ -47,13 +47,24 @@ namespace SendNewDistance
                     return new BadRequestObjectResult(-1);
                 }
 
-                using HttpResponseMessage RowKeysResponse = await httpClient.GetAsync($"https://databaseshamboo.table.core.windows.net/measurements{MEASUREMENTS_SAS}&$select=RowKey");
+                using HttpResponseMessage RowKeysResponse = await httpClient.GetAsync($"https://databaseshamboo.table.core.windows.net/measurements{MEASUREMENTS_SAS}&$select=RowKey,Timestamp, device_id");
                 RowKeysResponse.EnsureSuccessStatusCode();
                 string RowKeys = await RowKeysResponse.Content.ReadAsStringAsync();
                 RowKeysResponse rowKeys = JsonSerializer.Deserialize<RowKeysResponse>(RowKeys);
                 if (!int.TryParse(rowKeys.value.OrderByDescending(x => int.Parse(x.RowKey)).First().RowKey, out int nextFreeRowkey))
                 {
                     return new BadRequestObjectResult(-1);
+                }
+
+                var lastAddedMessageTime = rowKeys.value
+                    .Where(x => x.device_id == data.device_id)
+                    .OrderByDescending(x => x.Timestamp)
+                    .First()
+                    .Timestamp;
+                
+                if (lastAddedMessageTime > DateTime.Now.AddSeconds(-10))
+                {
+                    return new BadRequestObjectResult("Sending too fast");
                 }
                     nextFreeRowkey += 1;
                     var rebuildedBody = new RebuildedBody()
@@ -105,6 +116,8 @@ namespace SendNewDistance
     public class RowKey_
     {
         public string RowKey { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string device_id { get; set; }
     }
 
     public class RebuildedBody

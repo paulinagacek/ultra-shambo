@@ -17,7 +17,7 @@ namespace GetLastAddedBlob
     {
         [FunctionName("GetLastAddedDistance")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = null)] HttpRequest req,
             ILogger log)
         {
             //creds for connection
